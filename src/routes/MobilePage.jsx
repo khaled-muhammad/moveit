@@ -1,9 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
+import toast from "react-hot-toast";
+import useWebSocket from "react-use-websocket";
 
 const MobilePage = () => {
   const [scanning, setScanning] = useState(false)
   const [session, setSession] = useState(null)
+  const [isConnected, setIsConnected] = useState(false);
+
+  const {
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    readyState,
+    getWebSocket,
+  } = useWebSocket(session ? `ws://${window.location.host}/ws/beam/${session.beam_id}/` : null, {
+    onOpen: () => sendJsonMessage({type: 'auth', message: session.beam_key}),
+    shouldReconnect: (closeEvent) => true,
+    shouldConnect: !!session,
+  });
+  
+  useEffect(() => {
+    if (lastJsonMessage != null) {
+        if (lastJsonMessage.type == 'auth_sucess') {
+          setIsConnected(true)
+          toast("Beaming")
+        }
+    }
+  }, [lastJsonMessage])
 
   const handleStartScanning = async () => {
     try {
