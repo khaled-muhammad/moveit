@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+
+body {
+  @apply bg-[#0F0F1A] text-[#F5F5F7];
+}
+
+::selection {
+  background-color: #7F5AF0;
+}
+
+.goldman-regular {
+  font-family: "Goldman", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.goldman-bold {
+  font-family: "Goldman", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.logo-animate-container {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  display: inline-block;
+  z-index: 10;
+  perspective: 1000px;
+}
+
+.logo-animate-text {
+  position: relative;
+  display: inline-block;
+  color: #F5F5F7;
+  text-shadow: 0 0 10px #7F5AF0;
+  transform-style: preserve-3d;
+}
+
+.logo-animate-text::before {
+  content: 'MoveIt';
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #7F5AF0;
+  animation: logoGlitch 4s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.logo-animate-text::after {
+  content: 'MoveIt';
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #F5F5F7;
+  animation: logoGlitch2 4s infinite;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateX(5deg);
+  }
+}
+
+@keyframes logoGlitch {
+  0%, 90%, 100% {
+    transform: translate(0);
+  }
+  10% {
+    transform: translate(-2px, 2px);
+  }
+  20% {
+    transform: translate(2px, -2px);
+  }
+  30% {
+    transform: translate(-2px, -2px);
+  }
+  40% {
+    transform: translate(2px, 2px);
+  }
+  50% {
+    transform: translate(-2px, 2px);
+  }
+  60% {
+    transform: translate(2px, -2px);
+  }
+  70% {
+    transform: translate(-2px, -2px);
+  }
+  80% {
+    transform: translate(2px, 2px);
+  }
+}
+
+@keyframes logoGlitch2 {
+  0%, 90%, 100% {
+    transform: translate(0);
+  }
+  10% {
+    transform: translate(2px, -2px);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  30% {
+    transform: translate(2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  50% {
+    transform: translate(2px, -2px);
+  }
+  60% {
+    transform: translate(-2px, 2px);
+  }
+  70% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(-2px, -2px);
+  }
+}
+
+.brain-boom-btns {
+  align-items: center;
+}
+
+.brain-boom-btn {
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.brain-boom-btn:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, #7F5AF0 0%, transparent 80%);
+  opacity: 0.6;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s cubic-bezier(.4,0,.2,1), height 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.brain-boom-btn:hover {
+  transform: scale(1.08) rotate(-2deg);
+  box-shadow: 0 0 12px #7f5af053, 0 0 64px #1A1B2E;
+}
+
+.brain-boom-btn:hover:before {
+  width: 250%;
+  height: 250%;
+  opacity: 0.2;
+}
+
+.brain-boom-btn:active {
+  transform: scale(0.97) rotate(1deg);
+}
+
+@keyframes brainBoomPulse {
+  0%, 100% {
+    box-shadow: 0 0 16px #7F5AF0, 0 0 32px #1A1B2E;
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 0 32px #7F5AF0, 0 0 64px #1A1B2E;
+    filter: brightness(1.15) saturate(1.2);
+  }
+}
