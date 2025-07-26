@@ -5,6 +5,14 @@ body {
   @apply bg-[#0F0F1A] text-[#F5F5F7];
 }
 
+@layer {
+  .brain-boom-btn {
+    @apply from-[#1A1B2E] to-[#7F5AF0] bg-gradient-to-tr px-5 py-3 rounded-2xl cursor-pointer flex items-center gap-1 relative overflow-hidden font-bold;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.03em;
+  }
+}
+
 ::selection {
   background-color: #7F5AF0;
 }
@@ -129,14 +137,6 @@ body {
 
 .brain-boom-btns {
   align-items: center;
-}
-
-.brain-boom-btn {
-  position: relative;
-  overflow: hidden;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .brain-boom-btn:before {
