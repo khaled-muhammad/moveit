@@ -4,6 +4,30 @@ import toast from "react-hot-toast";
 import { useSession } from "../components/SessionProvider";
 import { useWebSocketContext } from "../components/WebSocketProvider";
 import Logo from "../components/Logo";
+import { FiCopy, FiUpload } from "react-icons/fi";
+import UploadButton from "../components/UploadBtn";
+
+import axios from 'axios';
+import { api } from "../consts";
+
+const uploadToUguu = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await api.post('upload/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Uploaded File Info:', response.data);
+    return response.data;
+  } catch (error) {
+    console.log('Upload failed:', error);
+    return null;
+  }
+};
 
 const MobilePage = () => {
   const [scanning, setScanning] = useState(false);
@@ -53,14 +77,30 @@ const MobilePage = () => {
           sound={false}
         />
       )}
+      {session && <div className="flex gap-5 flex-wrap">
+        <button className="brain-boom-btn" onClick={() => {
+          navigator.clipboard.readText().then((clipboardContent) => {
+            if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
+              shareClipBoard(clipboardContent)
+            }
+          })
+        }}><FiCopy /> Copy</button>
+        <UploadButton selected={(files) => {
+          files.forEach((f) => {
+            const type = f.type.split('/')[0];
 
-      <button className="brain-boom-btn" onClick={() => {
-        navigator.clipboard.readText().then((clipboardContent) => {
-          if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
-            shareClipBoard(clipboardContent)
-          }
-        })
-      }}>Copy</button>
+            toast(`Uploading ${f.name}`)
+            uploadToUguu(f).then((directLink) => {
+              if (!directLink) {
+                toast.error("Failed to upload!")
+                return;
+              }
+              toast(`Uploaded "${f.name}" Successfully!`)
+              shareClipBoard(directLink, type)
+            })
+          })
+        }} />
+      </div>}
     </section>
   );
 };
