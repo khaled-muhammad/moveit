@@ -1,32 +1,22 @@
 import { useState, useEffect } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import toast from "react-hot-toast";
-import useWebSocket from "react-use-websocket";
+import { useSession } from "../components/SessionProvider";
+import { useWebSocketContext } from "../components/WebSocketProvider";
+import Logo from "../components/Logo";
 
 const MobilePage = () => {
-  const [scanning, setScanning] = useState(false)
-  const [session, setSession] = useState(null)
-  const [isConnected, setIsConnected] = useState(false);
-
-  const {
-    sendMessage,
-    sendJsonMessage,
-    lastMessage,
-    lastJsonMessage,
-    readyState,
-    getWebSocket,
-  } = useWebSocket(session ? `ws://${window.location.host}/ws/beam/${session.beam_id}/` : null, {
-    onOpen: () => sendJsonMessage({type: 'auth', message: session.beam_key}),
-    shouldReconnect: (closeEvent) => true,
-    shouldConnect: !!session,
-  });
+  const [scanning, setScanning] = useState(false);
+  const { session, setSession } = useSession();
+  const { isConnected, lastJsonMessage, shareClipBoard, sharedClipboards } = useWebSocketContext();
   
   useEffect(() => {
     if (lastJsonMessage != null) {
-        if (lastJsonMessage.type == 'auth_sucess') {
-          setIsConnected(true)
-          toast("Beaming")
-        }
+      if (lastJsonMessage.type === 'auth_sucess') {
+        toast("Beaming");
+      } else {
+        // toast(lastJsonMessage.message);
+      }
     }
   }, [lastJsonMessage])
 
@@ -41,23 +31,18 @@ const MobilePage = () => {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center min-h-[100vh] gap-5">
-      <h1 className='text-4xl goldman-regular logo-animate-container'>
-        <span className='logo-animate-text'>MoveIt</span>
-      </h1>
+    <section className="flex flex-col justify-center items-center min-h-screen gap-5">
+      <Logo className="text-4xl" />
 
-      <h1 className="text-xl font-semibold text-center mx-5">Open moveit.khaled.hackclub.app on your PC/Laptop to start beaming</h1>
+      <h1 className="text-xl font-semibold text-center mx-5">{session? "Start Sharing" : "Open moveit.khaled.hackclub.app on your PC/Laptop to start beaming"}</h1>
 
-      {!scanning && (
+      {!session && (
         <button
           className="brain-boom-btn"
           onClick={handleStartScanning}
         >
           Scan QR
         </button>
-      )}
-      {session && (
-        <p className="text-green-500 font-mono">Scanned: {session.beam_id}</p>
       )}
       {scanning && (
         <Scanner
@@ -68,6 +53,14 @@ const MobilePage = () => {
           sound={false}
         />
       )}
+
+      <button className="brain-boom-btn" onClick={() => {
+        navigator.clipboard.readText().then((clipboardContent) => {
+          if (sharedClipboards.indexOf(clipboardContent) == -1) {
+            shareClipBoard(clipboardContent)
+          }
+        })
+      }}>Copy</button>
     </section>
   );
 };
