@@ -3,10 +3,14 @@ import StickyNote from './StickyNote';
 import { useWebSocketContext } from './WebSocketProvider';
 
 const StickyNoteContainer = () => {
-  const { sharedClipboards, setSharedClipboards } = useWebSocketContext();
+  const { sharedClipboards, setSharedClipboards, sendJsonMessage } = useWebSocketContext();
   
-  const handleRemoveNote = (id) => {
-    setSharedClipboards(prev => prev.filter((note) => note.id !== id));
+  const handleRemoveNote = (note) => {
+    setSharedClipboards(prev => prev.filter((n) => n.id !== note.id));
+    sendJsonMessage({
+      type: 'delete_note',
+      message: note.content,
+    })
   };
 
   return (
@@ -16,8 +20,9 @@ const StickyNoteContainer = () => {
           <StickyNote
             key={note.id}
             content={note.content}
+            type={note.extra}
             index={note.id}
-            onRemove={() => handleRemoveNote(note.id)}
+            onRemove={() => handleRemoveNote(note)}
           />
         ))}
       </div>
