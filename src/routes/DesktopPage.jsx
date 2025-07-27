@@ -28,13 +28,13 @@ const DesktopPage = () => {
     >
       <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md">
         {connectedDevices.length > 1 && session && (
-          <QRCodeDisplay session={session} size={100} />
+          <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={100} />
         )}
       </div>
       <Logo className="text-4xl" />
 
       {connectedDevices.length <= 1 && session && (
-        <QRCodeDisplay session={session} size={300} className="mb-10" />
+        <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={300} className="mb-10" />
       )}
       {sharedClipboards.length == 0 && <h1 className="text-3xl">
         {connectedDevices.length > 1? "Start Sharing" : "Scan the QR Code with your mobile phone to start sharing."}

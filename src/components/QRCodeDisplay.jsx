@@ -5,7 +5,7 @@ const QRCodeDisplay = ({ session, size = 300, className = "" }) => {
   
   return (
     <QRCode
-      value={JSON.stringify(session)}
+      value={session}
       fgColor="#fff"
       bgColor="#4C319CFF"
       size={size}

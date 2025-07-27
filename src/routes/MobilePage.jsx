@@ -33,7 +33,22 @@ const MobilePage = () => {
   const [scanning, setScanning] = useState(false);
   const { session, setSession } = useSession();
   const { isConnected, lastJsonMessage, shareClipBoard, sharedClipboards } = useWebSocketContext();
-  
+  const queryParams = new URLSearchParams(window.location.search);
+  const queryBeamId = queryParams.get('beam_id');
+
+  useState(() => {
+    if (queryBeamId != null) {
+      setScanning(false)
+      setSession({
+        beam_id: queryBeamId,
+        beam_key: null
+      })
+      const url = new URL(window.location.href)
+      url.searchParams.delete('beam_id')
+      window.history.replaceState({}, '', url)
+    }
+  }, [queryBeamId])
+
   useEffect(() => {
     if (lastJsonMessage != null) {
       if (lastJsonMessage.type === 'auth_sucess') {
@@ -72,7 +87,10 @@ const MobilePage = () => {
         <Scanner
           onScan={(result) => {
             setScanning(false)
-            setSession(JSON.parse(result[0].rawValue));
+            setSession({
+              beam_id: result[0].rawValue.split('?beam_id=')[1],
+              beam_key: null,
+            });
           }}
           sound={false}
         />
