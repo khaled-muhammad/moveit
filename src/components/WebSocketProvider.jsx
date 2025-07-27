@@ -42,7 +42,7 @@ export const WebSocketProvider = ({ children, session }) => {
       } else if (lastJsonMessage.type == 'authed_users') {
         setConnectedDevices(lastJsonMessage.users)
       } else if (lastJsonMessage.type == 'share_clipboard') {
-        setSharedClipboards([...sharedClipboards, lastJsonMessage.message])
+        setSharedClipboards([...sharedClipboards, {id: Date.now(), content: lastJsonMessage.message}])
       }
     }
   }, [lastJsonMessage]);

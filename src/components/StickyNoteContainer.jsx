@@ -5,19 +5,19 @@ import { useWebSocketContext } from './WebSocketProvider';
 const StickyNoteContainer = () => {
   const { sharedClipboards, setSharedClipboards } = useWebSocketContext();
   
-  const handleRemoveNote = (index) => {
-    setSharedClipboards(prev => prev.filter((_, i) => i !== index));
+  const handleRemoveNote = (id) => {
+    setSharedClipboards(prev => prev.filter((note) => note.id !== id));
   };
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-10">
       <div className="relative w-full h-full">
-        {sharedClipboards.map((content, index) => (
+        {sharedClipboards.map((note) => (
           <StickyNote
-            key={`note-${index}`}
-            content={content}
-            index={index}
-            onRemove={() => handleRemoveNote(index)}
+            key={note.id}
+            content={note.content}
+            index={note.id}
+            onRemove={() => handleRemoveNote(note.id)}
           />
         ))}
       </div>

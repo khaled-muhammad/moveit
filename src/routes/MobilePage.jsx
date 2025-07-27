@@ -56,7 +56,7 @@ const MobilePage = () => {
 
       <button className="brain-boom-btn" onClick={() => {
         navigator.clipboard.readText().then((clipboardContent) => {
-          if (sharedClipboards.indexOf(clipboardContent) == -1) {
+          if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
             shareClipBoard(clipboardContent)
           }
         })
