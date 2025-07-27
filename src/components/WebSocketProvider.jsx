@@ -42,15 +42,18 @@ export const WebSocketProvider = ({ children, session }) => {
       } else if (lastJsonMessage.type == 'authed_users') {
         setConnectedDevices(lastJsonMessage.users)
       } else if (lastJsonMessage.type == 'share_clipboard') {
-        setSharedClipboards([...sharedClipboards, {id: Date.now(), content: lastJsonMessage.message}])
+        setSharedClipboards([...sharedClipboards, {id: Date.now(), content: lastJsonMessage.message, extra: lastJsonMessage.extra}])
+      } else if (lastJsonMessage.type == 'delete_note') {
+        setSharedClipboards(sharedClipboards.filter((cb) => cb.content != lastJsonMessage.message))
       }
     }
   }, [lastJsonMessage]);
 
-  const shareClipBoard = (clipboard) => {
+  const shareClipBoard = (clipboard, clipboardType='text') => {
     sendJsonMessage({
       type: 'share_clipboard',
-      message: clipboard
+      message: clipboard,
+      extra: clipboardType,
     })
   }
 
