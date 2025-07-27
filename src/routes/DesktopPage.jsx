@@ -53,6 +53,7 @@ const DesktopPage = () => {
         </a>
       </div>}
       {sharedClipboards.length > 0 && <StickyNoteContainer />}
+      {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
     </section>
   );
 };
