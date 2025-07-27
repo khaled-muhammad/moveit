@@ -98,6 +98,10 @@ const MobilePage = () => {
       {session && <div className="flex gap-5 flex-wrap">
         <button className="brain-boom-btn" onClick={() => {
           navigator.clipboard.readText().then((clipboardContent) => {
+            if (!clipboardContent) {
+              toast("Your clipboard is empty!")
+              return;
+            }
             if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
               shareClipBoard(clipboardContent)
             }
