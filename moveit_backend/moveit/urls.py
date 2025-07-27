@@ -17,9 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from beam.views import GenerateBeamView
+from beam.views import GenerateBeamView, ZeroXZeroUploadView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/beams/create/', GenerateBeamView.as_view(), name='generate-beam'),
+    path('api/upload/', ZeroXZeroUploadView.as_view(), name='zeroxzero-upload')
 ]

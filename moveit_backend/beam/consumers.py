@@ -58,6 +58,7 @@ class BeamConsumer(WebsocketConsumer):
         res = json.loads(text_data)
         res_type = res["type"]
         message  = res["message"]
+        extra    = res.get("extra")
 
         if res_type == 'auth':
             authed = async_to_sync(self.auth_connection)(message)
@@ -113,7 +114,8 @@ class BeamConsumer(WebsocketConsumer):
                 self.beam_group_name,
                 {
                     "type": res_type,
-                    "message": message
+                    "message": message,
+                    "extra": extra,
                 }
             )
 
