@@ -15,7 +15,7 @@ const StickyNote = ({ content, index, onRemove, constraintsRef = null }) => {
   const rotations = [-3, -2, -1, 0, 1, 2, 3];
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [zIndex, setZIndex] = useState(index + 1); // prevent 0 stacking
+  const [zIndex, setZIndex] = useState(index + 1);
   const [colorClass] = useState(colors[index % colors.length]);
   const [rotation] = useState(rotations[Math.floor(Math.random() * rotations.length)]);
 
@@ -35,11 +35,11 @@ const StickyNote = ({ content, index, onRemove, constraintsRef = null }) => {
   }, []);
 
   const handleDragStart = () => {
-    setZIndex(Date.now()); // ensures it's always on top during drag
+    setZIndex(Date.now());
   };
 
   const handleDragEnd = () => {
-    // optionally update position if you want to save it
+
   };
 
   return (
