@@ -45,8 +45,8 @@ class BeamConsumer(WebsocketConsumer):
         )
 
     @database_sync_to_async
-    def auth_connection(self, beam_key):
-        return Beam.objects.filter(beam_id=self.beam_id, beam_key=beam_key).exists()
+    def auth_connection(self):
+        return Beam.objects.filter(beam_id=self.beam_id).exists()
 
     def assign_client_id(self):
         return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
