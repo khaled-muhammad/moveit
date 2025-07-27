@@ -6,6 +6,7 @@ import { useWebSocketContext } from "../components/WebSocketProvider";
 import Logo from "../components/Logo";
 import { FiCopy, FiUpload } from "react-icons/fi";
 import UploadButton from "../components/UploadBtn";
+import Footer from "../components/Footer";
 
 import axios from 'axios';
 import { api } from "../consts";
@@ -70,60 +71,63 @@ const MobilePage = () => {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center min-h-screen gap-5">
-      <Logo className="text-4xl" />
+    <>
+      <section className="flex flex-col justify-center items-center min-h-screen gap-5">
+        <Logo className="text-4xl" />
 
-      <h1 className="text-xl font-semibold text-center mx-5">{session? "Start Sharing" : <>Open <a className="text-[#7F5AF0]" href={window.location.origin}>{window.location.host}</a> on your PC/Laptop to start beaming</>}</h1>
+        <h1 className="text-xl font-semibold text-center mx-5">{session? "Start Sharing" : <>Open <a className="text-[#7F5AF0]" href={window.location.origin}>{window.location.host}</a> on your PC/Laptop to start beaming</>}</h1>
 
-      {!session && (
-        <button
-          className="brain-boom-btn"
-          onClick={handleStartScanning}
-        >
-          Scan QR
-        </button>
-      )}
-      {scanning && (
-        <Scanner
-          onScan={(result) => {
-            setScanning(false)
-            setSession({
-              beam_id: result[0].rawValue.split('?beam_id=')[1],
+        {!session && (
+          <button
+            className="brain-boom-btn"
+            onClick={handleStartScanning}
+          >
+            Scan QR
+          </button>
+        )}
+        {scanning && (
+          <Scanner
+            onScan={(result) => {
+              setScanning(false)
+              setSession({
+                beam_id: result[0].rawValue.split('?beam_id=')[1],
               beam_key: null,
-            });
-          }}
-          sound={false}
-        />
-      )}
-      {session && <div className="flex gap-5 flex-wrap">
-        <button className="brain-boom-btn" onClick={() => {
-          navigator.clipboard.readText().then((clipboardContent) => {
-            if (!clipboardContent) {
-              toast("Your clipboard is empty!")
-              return;
-            }
-            if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
-              shareClipBoard(clipboardContent)
-            }
-          })
-        }}><FiCopy /> Copy</button>
-        <UploadButton selected={(files) => {
-          files.forEach((f) => {
-            const type = f.type.split('/')[0];
-
-            toast(`Uploading ${f.name}`)
-            uploadToUguu(f).then((directLink) => {
-              if (!directLink) {
-                toast.error("Failed to upload!")
+              });
+            }}
+            sound={false}
+          />
+        )}
+        {session && <div className="flex gap-5 flex-wrap">
+          <button className="brain-boom-btn" onClick={() => {
+            navigator.clipboard.readText().then((clipboardContent) => {
+              if (!clipboardContent) {
+                toast("Your clipboard is empty!")
                 return;
               }
-              toast(`Uploaded "${f.name}" Successfully!`)
-              shareClipBoard(directLink, type)
+              if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
+                shareClipBoard(clipboardContent)
+              }
             })
-          })
-        }} />
-      </div>}
-    </section>
+          }}><FiCopy /> Copy</button>
+          <UploadButton selected={(files) => {
+            files.forEach((f) => {
+              const type = f.type.split('/')[0];
+
+              toast(`Uploading ${f.name}`)
+              uploadToUguu(f).then((directLink) => {
+                if (!directLink) {
+                  toast.error("Failed to upload!")
+                  return;
+                }
+                toast(`Uploaded "${f.name}" Successfully!`)
+                shareClipBoard(directLink, type)
+              })
+            })
+          }} />
+        </div>}
+      </section>
+      <Footer />
+    </>
   );
 };
 
