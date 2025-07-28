@@ -180,7 +180,7 @@ const DesktopPage = () => {
             <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={100} />
           )}
         </div>
-        <Logo className="text-4xl" />
+        <Logo className="text-4xl z-[91474836489999999]" />
 
         {connectedDevices.length <= 1 && session && (
           <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={300} className="mb-10" />

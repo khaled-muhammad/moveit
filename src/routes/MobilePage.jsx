@@ -73,7 +73,7 @@ const MobilePage = () => {
   return (
     <>
       <section className="flex flex-col justify-center items-center min-h-screen gap-5">
-        <Logo className="text-4xl" />
+        <Logo className="text-4xl z-[91474836489999999]" />
 
         <h1 className="text-xl font-semibold text-center mx-5">{session? "Start Sharing" : <>Open <a className="text-[#7F5AF0]" href={window.location.origin}>{window.location.host}</a> on your PC/Laptop to start beaming</>}</h1>
 
