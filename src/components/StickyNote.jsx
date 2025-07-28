@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
-const StickyNote = ({ content, type, index, onRemove, constraintsRef = null }) => {
+const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onMove, cameraPosition, worldX, worldY }) => {
   const colors = [
     'from-purple-400 to-indigo-500',
     'from-indigo-400 to-blue-500',
@@ -14,33 +14,58 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null }) =
 
   const rotations = [-3, -2, -1, 0, 1, 2, 3];
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [zIndex, setZIndex] = useState(index + 1);
   const [colorClass] = useState(colors[index % colors.length]);
   const [rotation] = useState(rotations[Math.floor(Math.random() * rotations.length)]);
 
   const noteRef = useRef(null);
 
-  useEffect(() => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+  const screenPosition = {
+    x: (worldX || 0) - cameraPosition.x,
+    y: (worldY || 0) - cameraPosition.y
+  };
 
-    const noteWidth = 256;
-    const noteHeight = 200;
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragStartWorld, setDragStartWorld] = useState({ x: 0, y: 0 });
 
-    const safeX = Math.random() * (viewportWidth - noteWidth - 100) + 50;
-    const safeY = Math.random() * (viewportHeight - noteHeight - 100) + 50;
-
-    setPosition({ x: safeX, y: safeY });
-  }, []);
-
-  const handleDragStart = () => {
+  const handleMouseDown = (e) => {
+    e.preventDefault();
     setZIndex(Date.now());
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setDragStartWorld({ x: worldX || 0, y: worldY || 0 });
   };
 
-  const handleDragEnd = () => {
-
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    
+    const newWorldX = dragStartWorld.x + deltaX;
+    const newWorldY = dragStartWorld.y + deltaY;
+    
+    if (onMove) {
+      onMove(newWorldX, newWorldY);
+    }
   };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, dragStart, dragStartWorld]);
 
   return (
     <motion.div
@@ -49,14 +74,15 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null }) =
       style={{
         zIndex,
         rotate: `${rotation}deg`,
-        boxShadow: '0 4px 20px rgba(127, 90, 240, 0.3)',
+        boxShadow: isDragging ? '0 10px 25px rgba(127, 90, 240, 0.5)' : '0 4px 20px rgba(127, 90, 240, 0.3)',
+        transform: isDragging ? 'scale(1.05)' : 'scale(1)',
       }}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{
         opacity: 1,
         scale: 1,
-        x: position.x,
-        y: position.y,
+        x: screenPosition.x,
+        y: screenPosition.y,
       }}
       transition={{
         type: 'spring',
@@ -64,13 +90,7 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null }) =
         damping: 20,
         opacity: { duration: 0.3 },
       }}
-      drag
-      dragConstraints={constraintsRef || false}
-      dragElastic={0.1}
-      dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
-      whileDrag={{ scale: 1.05, boxShadow: '0 10px 25px rgba(127, 90, 240, 0.5)' }}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onMouseDown={handleMouseDown}
       onDoubleClick={() => {
         if (type === "audio") {
           const audio = noteRef.current.querySelector('audio');
@@ -99,8 +119,8 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null }) =
             }
           }
         } else {
-          navigator.clipboard.writeText(content).then((res) => {
-            toast("Text copied successfully!")
+          navigator.clipboard.writeText(content).then(() => {
+            toast("Text copied successfully!");
           });
         }
       }}
