@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiGithub, FiInfo, FiX } from "react-icons/fi";
+import { FiCopy, FiGithub, FiInfo, FiX } from "react-icons/fi";
 import { useSession } from "../components/SessionProvider";
 import { useWebSocketContext } from "../components/WebSocketProvider";
 import QRCodeDisplay from "../components/QRCodeDisplay";
@@ -42,7 +42,7 @@ const KnowMoreButton = () => {
 
   return (
     <>
-      <button 
+      <button
         className="brain-boom-btn group relative" 
         onClick={() => setIsOpen(true)}
       >
@@ -53,7 +53,7 @@ const KnowMoreButton = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="fixed inset-0 bg-black/10 bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-hidden"
+            className="fixed inset-0 bg-black/10 bg-opacity-70 backdrop-blur-sm z-9999999999 flex items-center justify-center p-4 overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -156,8 +156,32 @@ const KnowMoreButton = () => {
 };
 
 const DesktopPage = () => {
-  const { session } = useSession();
-  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards} = useWebSocketContext();
+  const { session, setSession } = useSession();
+  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, shareClipBoard, setShouldConnect} = useWebSocketContext();
+  const queryParams = new URLSearchParams(window.location.search);
+  const queryBeamId = queryParams.get('beam_id');
+
+  useState(() => {
+    if (isConnected) {
+      return;
+    } else {
+      console.log("NEEDS TO CONNECT")
+    }
+    if (queryBeamId != null) {
+      setSession({
+        beam_id: queryBeamId,
+        beam_key: null
+      })
+      const url = new URL(window.location.href)
+      window.history.replaceState({}, '', url)
+    } else if (session != null) {
+      setSession({
+        beam_id: session.beam_id,
+        beam_key: null
+      })
+    }
+    setShouldConnect('auto')
+  }, [queryBeamId])
 
   useEffect(() => {
     if (lastJsonMessage != null) {
@@ -175,15 +199,27 @@ const DesktopPage = () => {
         id="main"
         className="flex justify-center items-center gap-5 flex-col min-h-[100vh]"
       >
-        <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md">
+        <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md z-[100]">
           {connectedDevices.length > 1 && session && (
-            <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={100} />
+            <div className="relative group hover:cursor-pointer" onClick={() => {
+            navigator.clipboard.writeText(session.beam_id)
+              .then(() => {
+                toast("Beam ID copied successfully");
+              })
+              .catch((err) => {
+                toast("Failed to copy beam ID!");
+              });
+            }}>
+              <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={100} className="group" />
+              <div className="absolute inset-0 bg-purple-400/70 z-[9999] rounded-md flex justify-center items-center transition-all duration-300 opacity-0 group-hover:opacity-100">
+                <span className="font-bold text-white pointer-events-none">Copy</span>
+              </div>
+            </div>
           )}
         </div>
-        <Logo className="text-4xl z-[91474836489999999]" />
 
         {connectedDevices.length <= 1 && session && (
-          <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={300} className="mb-10" />
+          <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={300} className="mb-10 transition-all duration-300 hover:scale-125" />
         )}
         {sharedClipboards.length == 0 && <h1 className="text-3xl">
           {connectedDevices.length > 1? "Start Sharing" : "Scan the QR Code with your mobile phone to start sharing."}
@@ -200,11 +236,21 @@ const DesktopPage = () => {
             <FiGithub />
             GitHub Repo
           </a>
+          <button className="brain-boom-btn" onClick={() => {
+            navigator.clipboard.readText().then((clipboardContent) => {
+              if (!clipboardContent) {
+                toast("Your clipboard is empty!")
+                return;
+              }
+              if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
+                shareClipBoard(clipboardContent)
+              }
+            })
+          }}><FiCopy /> Copy</button>
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
         {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
       </section>
-      <Footer />
     </>
   );
 };
