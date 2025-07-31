@@ -8,7 +8,7 @@ const Footer = () => {
   
   return (
     <motion.footer
-      className="w-full bg-gradient-to-t from-[#0F0F1A] to-[#1A1B2E] border-t border-[#7F5AF0]/20 backdrop-blur-sm relative z-50"
+      className="w-full bg-gradient-to-t from-[#0F0F1A] to-[#1A1B2E] border-t border-[#7F5AF0]/20 backdrop-blur-sm relative z-50 shrink-0"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
