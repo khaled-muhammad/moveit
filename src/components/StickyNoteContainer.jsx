@@ -68,58 +68,58 @@ const StickyNoteContainer = () => {
 
 
 
-  useEffect(() => {
-    const keys = { 
-      w: false, a: false, s: false, d: false, 
-      ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false 
-    };
+  // useEffect(() => {
+  //   const keys = { 
+  //     w: false, a: false, s: false, d: false, 
+  //     ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false 
+  //   };
     
-    const handleKeyDown = (e) => {
-      if (keys.hasOwnProperty(e.key)) {
-        e.preventDefault();
-        keys[e.key] = true;
-      }
-    };
+  //   const handleKeyDown = (e) => {
+  //     if (keys.hasOwnProperty(e.key)) {
+  //       e.preventDefault();
+  //       keys[e.key] = true;
+  //     }
+  //   };
     
-    const handleKeyUp = (e) => {
-      if (keys.hasOwnProperty(e.key)) {
-        e.preventDefault();
-        keys[e.key] = false;
-      }
-    };
+  //   const handleKeyUp = (e) => {
+  //     if (keys.hasOwnProperty(e.key)) {
+  //       e.preventDefault();
+  //       keys[e.key] = false;
+  //     }
+  //   };
 
-    const updateCamera = () => {
-      const speed = 5;
-      let deltaX = 0;
-      let deltaY = 0;
+  //   const updateCamera = () => {
+  //     const speed = 5;
+  //     let deltaX = 0;
+  //     let deltaY = 0;
 
-      if (keys.w || keys.ArrowUp) deltaY -= speed;
-      if (keys.s || keys.ArrowDown) deltaY += speed;
-      if (keys.a || keys.ArrowLeft) deltaX -= speed;
-      if (keys.d || keys.ArrowRight) deltaX += speed;
+  //     if (keys.w || keys.ArrowUp) deltaY -= speed;
+  //     if (keys.s || keys.ArrowDown) deltaY += speed;
+  //     if (keys.a || keys.ArrowLeft) deltaX -= speed;
+  //     if (keys.d || keys.ArrowRight) deltaX += speed;
 
-      if (deltaX !== 0 || deltaY !== 0) {
-        setCameraPosition(prev => ({
-          x: prev.x + deltaX,
-          y: prev.y + deltaY
-        }));
-      }
+  //     if (deltaX !== 0 || deltaY !== 0) {
+  //       setCameraPosition(prev => ({
+  //         x: prev.x + deltaX,
+  //         y: prev.y + deltaY
+  //       }));
+  //     }
 
-      animationFrameRef.current = requestAnimationFrame(updateCamera);
-    };
+  //     animationFrameRef.current = requestAnimationFrame(updateCamera);
+  //   };
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-    animationFrameRef.current = requestAnimationFrame(updateCamera);
+  //   document.addEventListener('keydown', handleKeyDown);
+  //   document.addEventListener('keyup', handleKeyUp);
+  //   animationFrameRef.current = requestAnimationFrame(updateCamera);
 
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeyDown);
+  //     document.removeEventListener('keyup', handleKeyUp);
+  //     if (animationFrameRef.current) {
+  //       cancelAnimationFrame(animationFrameRef.current);
+  //     }
+  //   };
+  // }, []);
 
   const handleMouseDown = (e) => {
     if (e.target === containerRef.current || 
