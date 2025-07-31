@@ -47,4 +47,7 @@ Thumbs.db
 *.log
 
 # VSCode
-.vscode/ 
+.vscode/
+
+# SQLite database
+db.sqlite3
