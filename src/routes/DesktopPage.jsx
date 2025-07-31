@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiCopy, FiGithub, FiInfo, FiX } from "react-icons/fi";
+import { FiClipboard, FiCopy, FiGithub, FiInfo, FiPlus, FiShare2, FiX } from "react-icons/fi";
 import { useSession } from "../components/SessionProvider";
 import { useWebSocketContext } from "../components/WebSocketProvider";
 import QRCodeDisplay from "../components/QRCodeDisplay";
@@ -193,6 +193,35 @@ const DesktopPage = () => {
     }
   }, [lastJsonMessage])
 
+  const pasteClipboard = () => {
+    navigator.clipboard.readText().then((clipboardContent) => {
+      if (!clipboardContent) {
+        toast("Your clipboard is empty!")
+        return;
+      }
+      if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
+        shareClipBoard(clipboardContent)
+      }
+    })
+  }
+
+  const handleShareBeam = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Moveit Beam",
+          text: `Join my Beam on Moveit!`,
+          url: `${window.location.origin}?beam_id=${session.beam_id}`,
+        });
+        console.log("Shared successfully");
+      } catch (error) {
+        console.error("Error sharing:", error);
+      }
+    } else {
+      alert("Sharing is not supported on this device/browser.");
+    }
+  };
+
   return (
     <>
       <section
@@ -236,19 +265,18 @@ const DesktopPage = () => {
             <FiGithub />
             GitHub Repo
           </a>
-          <button className="brain-boom-btn" onClick={() => {
-            navigator.clipboard.readText().then((clipboardContent) => {
-              if (!clipboardContent) {
-                toast("Your clipboard is empty!")
-                return;
-              }
-              if (sharedClipboards.filter((cb) => cb.content == clipboardContent).length == 0) {
-                shareClipBoard(clipboardContent)
-              }
-            })
-          }}><FiCopy /> Copy</button>
+          <button className="brain-boom-btn" onClick={pasteClipboard}><FiCopy /> Copy</button>
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
+        {
+          <div className="toolbar fixed bottom-20 z-[99999999999999999999999] px-6 py-3 bg-violet-600/20 rounded-2xl backdrop-blur-md ring-2 ring-violet-700 flex gap-10 justify-center items-center">
+            <button onClick={pasteClipboard}>
+              <FiClipboard size={22} />
+            </button>
+            <button><FiPlus size={22} /></button>
+            <button onClick={handleShareBeam}><FiShare2 size={22} /></button>
+          </div>
+        }
         {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
       </section>
     </>

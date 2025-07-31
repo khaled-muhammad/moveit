@@ -328,3 +328,7 @@ html, body {
   opacity: 1;
   transform: scale(1);
 }
+
+.toolbar button:hover {
+  @apply text-[#7F5AF0] cursor-pointer;
+}
