@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     #my apps
+    'my_auth',
     'beam',
 ]
 
