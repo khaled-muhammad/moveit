@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import MobilePage from "./routes/MobilePage";
 import DesktopPage from "./routes/DesktopPage";
-import { SessionProvider } from "./components/SessionProvider";
-import { WebSocketProvider } from "./components/WebSocketProvider";
-import { useSession } from "./components/SessionProvider";
 
 const AppContent = () => {
-  const [isMobile, setIsMobile] = useState(true);
-  const { session } = useSession();
+  const [isMobile, setIsMobile] = useState(null);
 
   useEffect(() => {
     const checkDevice = () => {
@@ -23,17 +19,13 @@ const AppContent = () => {
   }, []);
 
   return (
-    <WebSocketProvider session={session}>
-      {isMobile ? <MobilePage /> : <DesktopPage />}
-    </WebSocketProvider>
+    isMobile == null? <p>Loading ...</p> : isMobile ? <MobilePage /> : <DesktopPage />
   );
 };
 
 function App() {
   return (
-    <SessionProvider>
-      <AppContent />
-    </SessionProvider>
+    <AppContent />
   );
 }
 
