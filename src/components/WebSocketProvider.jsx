@@ -13,13 +13,17 @@ export const useWebSocketContext = () => {
 
 export const WebSocketProvider = ({ children, session }) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [shouldConnect, setShouldConnect] = useState(null);
   const [connectedDevices, setConnectedDevices] = useState([]);
   const [sharedClipboards, setSharedClipboards] = useState([]);
 
+  const auth = () => {
+    sendJsonMessage({ type: 'auth', message: session?.beam_key })
+  }
+
   const webSocketConfig = {
-    onOpen: () => sendJsonMessage({ type: 'auth', message: session?.beam_key }),
+    onOpen: auth,
     shouldReconnect: (closeEvent) => true,
-    shouldConnect: !!session,
   };
 
   const {
@@ -31,7 +35,8 @@ export const WebSocketProvider = ({ children, session }) => {
     getWebSocket,
   } = useWebSocket(
     session ? `ws://${window.location.host}/ws/beam/${session.beam_id}/` : null,
-    webSocketConfig
+    webSocketConfig,
+    shouldConnect == null? false : !!session
   );
 
   useEffect(() => {
@@ -40,11 +45,16 @@ export const WebSocketProvider = ({ children, session }) => {
         setIsConnected(true);
         console.log(lastJsonMessage.message)
       } else if (lastJsonMessage.type == 'authed_users') {
+        console.log(lastJsonMessage)
         setConnectedDevices(lastJsonMessage.users)
       } else if (lastJsonMessage.type == 'share_clipboard') {
         setSharedClipboards([...sharedClipboards, {id: Date.now(), content: lastJsonMessage.message, extra: lastJsonMessage.extra}])
       } else if (lastJsonMessage.type == 'delete_note') {
         setSharedClipboards(sharedClipboards.filter((cb) => cb.content != lastJsonMessage.message))
+      } else {
+        console.log("Unknown")
+        console.log(lastJsonMessage)
+        console.log("=======")
       }
     }
   }, [lastJsonMessage]);
@@ -70,6 +80,8 @@ export const WebSocketProvider = ({ children, session }) => {
     readyState,
     getWebSocket,
     shareClipBoard,
+    auth,
+    setShouldConnect
   };
 
   return (
