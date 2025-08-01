@@ -332,3 +332,286 @@ html, body {
 .toolbar .toolbar-btn:hover {
   @apply text-[#7F5AF0] cursor-pointer;
 }
+.editor-container {
+  overflow-x: hidden;
+}
+/* Lexical Editor Styles */
+/* .editor-container {
+  border-radius: 8px;
+  overflow: hidden;
+} */
+
+.actual-toolbar {
+  /* display: flex; */
+  /* align-items: center; */
+  /* gap: 4px; */
+  /* padding: 8px 12px; */
+  /* background: #16172B; */
+  /* border-bottom: 1px solid #2A2B3E; */
+  @apply flex items-center gap-1 px-8 py-4 flex-wrap bg-violet-950/50 border-2 border-violet-800 rounded-2xl;
+  /* flex-wrap: wrap; */
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #F5F5F7;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.actual-toolbar .toolbar-btn:hover {
+  background: rgba(127, 90, 240, 0.2);
+  color: #7F5AF0;
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toolbar-btn.active {
+  background: #7F5AF0;
+  color: white;
+}
+
+.toolbar-select {
+  @apply bg-[#2a2b3e72] rounded-lg text-[#F5F5F7] text-[12px] cursor-pointer border border-[#3A3B4E] px-[8px] py-[4px];
+}
+
+.toolbar-select:focus {
+  outline: none;
+  border-color: #7F5AF0;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  /* background: #3A3B4E; */
+  margin: 0 4px;
+}
+
+.editor-inner {
+  position: relative;
+  @apply border-2 border-violet-800 rounded-2xl bg-violet-950/50 mt-10;
+}
+
+.editor-input {
+  min-height: 300px;
+  padding: 16px;
+  color: #F5F5F7;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.6;
+  font-family: 'Inter', sans-serif;
+}
+
+.editor-placeholder {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  color: #8B8B8B;
+  pointer-events: none;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.editor-text-bold {
+  font-weight: bold;
+}
+
+.editor-textItalic {
+  font-style: italic;
+}
+
+.editor-textUnderline {
+  text-decoration: underline;
+}
+
+.editor-textStrikethrough {
+  text-decoration: line-through;
+}
+
+.editor-text-subscript {
+  font-size: 0.8em;
+  vertical-align: sub;
+}
+
+.editor-text-superscript {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+
+.editor-text-code {
+  background: rgba(127, 90, 240, 0.2);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.editor-heading-h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.67em 0;
+  color: #F5F5F7;
+}
+
+.editor-heading-h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.83em 0;
+  color: #F5F5F7;
+}
+
+.editor-heading-h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin: 1em 0;
+  color: #F5F5F7;
+}
+
+.editor-paragraph {
+  margin: 0 0 1em 0;
+  color: #F5F5F7;
+}
+
+.editor-list-ol {
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.editor-list-ul {
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.editor-listitem {
+  margin: 0.5em 0;
+  color: #F5F5F7;
+}
+
+.editor-quote {
+  border-left: 4px solid #7F5AF0;
+  padding-left: 16px;
+  margin: 1em 0;
+  font-style: italic;
+  color: #D1D1D1;
+}
+
+.editor-code {
+  background: #16172B;
+  border: 1px solid #2A2B3E;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 1em 0;
+  font-family: 'Courier New', monospace;
+  color: #F5F5F7;
+  overflow-x: auto;
+}
+
+.editor-link {
+  color: #7F5AF0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.editor-link:hover {
+  color: #9B6DFF;
+}
+
+.tree-view-output {
+  background: #16172B;
+  border-top: 1px solid #2A2B3E;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #8B8B8B;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none; /*To show or hide debug*/
+}
+
+.editor-text-left {
+  text-align: left;
+}
+
+.editor-text-center {
+  text-align: center;
+}
+
+.editor-text-right {
+  text-align: right;
+}
+
+.editor-text-justify {
+  text-align: justify;
+}
+
+.image-node {
+  display: inline-block;
+  position: relative;
+  cursor: default;
+  margin: 4px 0;
+  max-width: 100%;
+}
+
+.image-node.focused {
+  outline: 2px solid #7F5AF0;
+  border-radius: 4px;
+}
+
+.image-node .image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.image-edit-button {
+  background: rgba(0, 0, 0, 0.8);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  transition: all 0.2s ease;
+}
+
+.image-edit-button:hover {
+  background: rgba(127, 90, 240, 0.8);
+  transform: scale(1.05);
+}
+
+.image-resizer {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #7F5AF0;
+  border-radius: 4px;
+  bottom: -6px;
+  cursor: se-resize;
+  height: 12px;
+  position: absolute;
+  right: -6px;
+  width: 12px;
+  transition: all 0.2s ease;
+}
+
+.image-resizer:hover {
+  background: rgba(127, 90, 240, 0.8);
+  transform: scale(1.1);
+}
