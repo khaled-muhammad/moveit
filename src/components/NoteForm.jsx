@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+
 import {
   $isTextNode,
   // DOMConversionMap,
@@ -133,14 +135,27 @@ const editorConfig = {
   theme: ExampleTheme,
 };
 
+function MyOnChangePlugin({ onChange }) {
+  const [editor] = useLexicalComposerContext();
+  useEffect(() => {
+    return editor.registerUpdateListener(({editorState}) => {
+      onChange(editorState);
+    });
+  }, [editor, onChange]);
+  return null;
+}
+
 const NoteForm = ({ onSave, onCancel, initialNote = null }) => {
   const [title, setTitle] = useState(initialNote?.title || '');
+  const [content, setContent] = useState(null);
 
   const handleSave = () => {
-    // Get editor content here
-    const content = ''; // This would be the actual editor content
     onSave({ title, content });
   };
+
+  function onChange(editorState) {
+    setContent(editorState);
+  }
 
   return (
     <div className="p-6">
@@ -186,6 +201,7 @@ const NoteForm = ({ onSave, onCancel, initialNote = null }) => {
                 <AutoFocusPlugin />
                 <TreeViewPlugin />
                 <ImagePlugin />
+                <MyOnChangePlugin onChange={onChange}/>
             </div>
             </div>
         </LexicalComposer>
