@@ -171,6 +171,8 @@ function ImageComponent({
   const [editor] = useLexicalComposerContext();
   const imageRef = useRef(null);
   const buttonRef = useRef(null);
+  
+  const isReadOnly = editor.isEditable() === false;
 
   const onDelete = useCallback(
     (event) => {
@@ -224,10 +226,11 @@ function ImageComponent({
 
   const onClick = useCallback(
     (event) => {
+      if (isReadOnly) return;
       event.preventDefault();
       setIsSelected(true);
     },
-    [],
+    [isReadOnly],
   );
 
   const onResizeMouseDown = useCallback(
@@ -354,8 +357,8 @@ function ImageComponent({
           outline: isFocused ? '2px solid #7F5AF0' : 'none',
         }}
         onClick={onClick}
-        onMouseEnter={() => setShowDeleteButton(true)}
-        onMouseLeave={() => setShowDeleteButton(false)}
+        onMouseEnter={() => !isReadOnly && setShowDeleteButton(true)}
+        onMouseLeave={() => !isReadOnly && setShowDeleteButton(false)}
       >
         <img
           className="image"
@@ -371,7 +374,7 @@ function ImageComponent({
           draggable={false}
           onLoad={onLoad}
         />
-        {(isFocused || showDeleteButton) && (
+        {!isReadOnly && (isFocused || showDeleteButton) && (
           <>
             <button
               className="image-edit-button"
@@ -430,7 +433,7 @@ function ImageComponent({
             </button>
           </>
         )}
-        {resizable && (isFocused || showDeleteButton) && (
+        {!isReadOnly && resizable && (isFocused || showDeleteButton) && (
           <div
             className="image-resizer"
             style={{
