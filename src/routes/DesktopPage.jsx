@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiClipboard, FiCopy, FiGithub, FiInfo, FiPlus, FiShare2, FiX } from "react-icons/fi";
+import { FiClipboard, FiCopy, FiGithub, FiInfo, FiPlus, FiShare2, FiX, FiSend, FiMaximize, FiMaximize2 } from "react-icons/fi";
 import { useSession } from "../components/SessionProvider";
 import { useWebSocketContext } from "../components/WebSocketProvider";
 import QRCodeDisplay from "../components/QRCodeDisplay";
@@ -8,6 +8,8 @@ import StickyNoteContainer from "../components/StickyNoteContainer";
 import Footer from "../components/Footer";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { CloseButton } from "../components/closeBtn";
+import NoteForm from "../components/NoteForm";
 
 const KnowMoreButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -160,6 +162,10 @@ const DesktopPage = () => {
   const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, shareClipBoard, setShouldConnect} = useWebSocketContext();
   const queryParams = new URLSearchParams(window.location.search);
   const queryBeamId = queryParams.get('beam_id');
+  
+  const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
+  const [isNoteEditorFullScreen, setIsNoteEditorFullScreen] = useState(false);
+  const [messageInput, setMessageInput] = useState('');
 
   useState(() => {
     if (isConnected) {
@@ -193,6 +199,17 @@ const DesktopPage = () => {
     }
   }, [lastJsonMessage])
 
+  useEffect(() => {
+    if (isNoteEditorFullScreen) {
+      document.body.style.overflowY = 'hidden';
+      setTimeout(() => {
+        document.body.scrollTo({top:0})
+      }, 500)
+    } else {
+      document.body.style.overflowY = 'auto';
+    }
+  }, [isNoteEditorFullScreen])
+
   const pasteClipboard = () => {
     navigator.clipboard.readText().then((clipboardContent) => {
       if (!clipboardContent) {
@@ -204,6 +221,21 @@ const DesktopPage = () => {
       }
     })
   }
+
+  const handleAddMessage = () => {
+    if (messageInput.trim()) {
+      shareClipBoard(messageInput.trim());
+      setMessageInput('');
+      setIsToolbarExpanded(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleAddMessage();
+    }
+  };
 
   const handleShareBeam = async () => {
     if (navigator.share) {
@@ -228,7 +260,7 @@ const DesktopPage = () => {
         id="main"
         className="flex justify-center items-center gap-5 flex-col min-h-[100vh]"
       >
-        <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md z-[100]">
+        <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md z-[11]">
           {connectedDevices.length > 1 && session && (
             <div className="relative group hover:cursor-pointer" onClick={() => {
             navigator.clipboard.writeText(session.beam_id)
@@ -269,13 +301,135 @@ const DesktopPage = () => {
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
         {
-          <div className="toolbar fixed bottom-20 z-[99999999999999999999999] px-6 py-3 bg-violet-600/20 rounded-2xl backdrop-blur-md ring-2 ring-violet-700 flex gap-10 justify-center items-center">
-            <button onClick={pasteClipboard}>
-              <FiClipboard size={22} />
-            </button>
-            <button><FiPlus size={22} /></button>
-            <button onClick={handleShareBeam}><FiShare2 size={22} /></button>
-          </div>
+          <motion.div
+            className={`toolbar fixed ${isNoteEditorFullScreen? 'z-[100]' : 'z-[11]'} px-6 py-3 bg-violet-600/20 backdrop-blur-md ring-2 ring-violet-700 flex gap-10 justify-center items-center`}
+            animate={{
+              width: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "400px" : "200px",
+              minWidth: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "400px" : "200px",
+              height: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "80px" : "60px",
+              minHeight: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "80px" : "60px",
+              bottom: isNoteEditorFullScreen ? "0" : sharedClipboards.length > 0 ? "80px" : "20px",
+              borderRadius: isNoteEditorFullScreen ? "0" : "16px",
+              left: isNoteEditorFullScreen ? "0" : "auto",
+              right: isNoteEditorFullScreen ? "0" : "auto",
+              top: isNoteEditorFullScreen ? "0" : "auto",
+            }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 200, 
+              damping: 25,
+              duration: 0.4
+            }}
+            style={{
+              width: isToolbarExpanded ? "400px" : "200px",
+              minWidth: isToolbarExpanded ? "400px" : "200px",
+              height: isToolbarExpanded ? "80px" : "60px",
+              minHeight: isToolbarExpanded ? "80px" : "60px",
+            }}
+          >
+            {
+              isNoteEditorFullScreen && <CloseButton
+                  onClick={() => {
+                    setIsToolbarExpanded(false)
+                    setIsNoteEditorFullScreen(false)
+                  }}
+                />
+            }
+            {isNoteEditorFullScreen? '' : !isToolbarExpanded ? (
+              <motion.div
+                className="flex gap-10 justify-center items-center w-full"
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.button
+                  className="toolbar-btn"
+                  onClick={pasteClipboard}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FiClipboard size={22} />
+                </motion.button>
+                <motion.button
+                  className="toolbar-btn"
+                  onClick={() => setIsToolbarExpanded(true)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FiPlus size={22} />
+                </motion.button>
+                <motion.button
+                  className="toolbar-btn"
+                  onClick={handleShareBeam}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FiShare2 size={22} />
+                </motion.button>
+              </motion.div>
+            ) : (
+              <motion.div
+                className="flex items-center gap-3 w-full"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1, duration: 0.3 }}
+              >
+                <motion.button
+                  onClick={() => setIsToolbarExpanded(false)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FiX size={20} />
+                </motion.button>
+                <motion.input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your message..."
+                  className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-400 text-sm"
+                  autoFocus
+                />
+                <motion.button
+                  onClick={handleAddMessage}
+                  disabled={!messageInput.trim()}
+                  className={`p-2 rounded-full transition-all ${
+                    messageInput.trim() 
+                      ? 'bg-violet-500 hover:bg-violet-600 text-white' 
+                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  }`}
+                  whileHover={messageInput.trim() ? { scale: 1.1 } : {}}
+                  whileTap={messageInput.trim() ? { scale: 0.9 } : {}}
+                >
+                  <FiSend size={16} />
+                </motion.button>
+              </motion.div>
+            )}
+            {isToolbarExpanded && !isNoteEditorFullScreen && (
+              <motion.button
+                className="absolute -top-7 -right-7 bg-violet-600/20 backdrop-blur-md ring-2 ring-violet-700 p-2 rounded-full cursor-pointer hover:bg-violet-500/30 transition-colors"
+                initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300, 
+                  damping: 20,
+                  delay: 0.2
+                }}
+                whileHover={{ rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  setIsNoteEditorFullScreen(true)
+                }}
+              >
+                <FiMaximize2 size={16} />
+              </motion.button>
+            )}
+            {isNoteEditorFullScreen && <div className="h-[90vh] w-[100%] mt-15"><NoteForm /></div>}
+          </motion.div>
         }
         {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
       </section>
