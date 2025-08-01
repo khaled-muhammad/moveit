@@ -143,7 +143,7 @@ const NoteForm = ({ onSave, onCancel, initialNote = null }) => {
   };
 
   return (
-    <div className="p-6 overflow-y-auto">
+    <div className="p-6">
     <h2 className="text-xl font-bold mb-4 text-white">
         {initialNote ? 'Edit Note' : 'Create New Note'}
     </h2>

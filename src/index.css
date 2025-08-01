@@ -18,6 +18,27 @@ html, body {
   }
 }
 
+.purple-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #a855f7 transparent;
+}
+
+.purple-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.purple-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.purple-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #a855f7;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
 ::selection {
   background-color: #7F5AF0;
 }

@@ -428,7 +428,7 @@ const DesktopPage = () => {
                 <FiMaximize2 size={16} />
               </motion.button>
             )}
-            {isNoteEditorFullScreen && <div className="h-[90vh] w-[100%] mt-15"><NoteForm /></div>}
+            {isNoteEditorFullScreen && <div className="h-[90vh] w-[100%] mt-15 overflow-y-auto purple-scrollbar"><NoteForm /></div>}
           </motion.div>
         }
         {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
