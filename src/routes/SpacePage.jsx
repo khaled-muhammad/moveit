@@ -11,158 +11,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import useDeviceType from "../hooks/deviceType"
 import { isValidUUIDv4 } from "../utils";
 import StaticStickyNote from "../components/StaticStickyNote";
-
-const KnowMoreButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  
-  const features = [
-    {
-      title: "Instant Sharing",
-      description: "Share text, links, images, audio, and videos between devices instantly.",
-      color: "from-purple-400 to-indigo-500"
-    },
-    {
-      title: "No Login Required",
-      description: "Just scan the QR code with your mobile device and start sharing.",
-      color: "from-indigo-400 to-blue-500"
-    },
-    {
-      title: "Drag & Drop",
-      description: "Organize your shared content with interactive sticky notes.",
-      color: "from-blue-400 to-cyan-500"
-    },
-    {
-      title: "Privacy First",
-      description: "Your data stays on your devices and is never stored on servers.",
-      color: "from-cyan-400 to-teal-500"
-    },
-    {
-      title: "Open Source",
-      description: "MoveIt is completely open source and free to use.",
-      color: "from-teal-400 to-green-500"
-    }
-  ];
-
-  return (
-    <>
-      <button 
-        className="brain-boom-btn group relative" 
-        onClick={() => setIsOpen(true)}
-      >
-        <FiInfo className="mr-2" />
-        Know More
-      </button>
-      
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div 
-            className="fixed inset-0 bg-black/10 bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-          >
-            <motion.div 
-              className="bg-[#1A1B2E] rounded-xl p-6 max-w-2xl w-full relative overflow-hidden"
-              initial={{ scale: 0.8, opacity: 0, rotateX: 30 }}
-              animate={{ scale: 1, opacity: 1, rotateX: 0 }}
-              exit={{ scale: 0.8, opacity: 0, rotateX: -30 }}
-              transition={{ type: 'spring', damping: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                boxShadow: '0 0 20px rgba(127, 90, 240, 0.5), inset 0 0 10px rgba(127, 90, 240, 0.2)',
-                border: '1px solid rgba(127, 90, 240, 0.3)',
-              }}
-            >
-              <button 
-                className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                <FiX size={24} />
-              </button>
-              
-              <motion.h2 
-                className="text-3xl font-bold mb-6 text-center goldman-regular text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500 know-more-title"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 300 }}
-              >
-                About MoveIt
-              </motion.h2>
-              
-              <motion.p 
-                className="text-gray-300 mb-8 text-center leading-relaxed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                MoveIt is a modern web application that allows you to easily share content between your devices.
-                <br />
-                <span className="text-purple-400">No downloads, no accounts, no hassle.</span> Just scan and share!
-              </motion.p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {features.map((feature, index) => (
-                  <motion.div 
-                    key={index}
-                    className={`bg-gradient-to-br ${feature.color} p-4 rounded-lg shadow-lg know-more-feature-card`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ 
-                      opacity: 1, 
-                      y: 0,
-                      transition: {
-                        delay: index * 0.1,
-                        duration: 0.1
-                      }
-                    }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      rotate: Math.random() < 0.5 ? -1 : 1,
-                      boxShadow: '0 10px 25px rgba(127, 90, 240, 0.5)'
-                    }}
-                    style={{}}
-                  >
-                    <h3 className="font-bold text-xl mb-2">{feature.title}</h3>
-                    <p className="text-white text-opacity-90">{feature.description}</p>
-                  </motion.div>
-                ))}
-              </div>
-              
-              <motion.div 
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <motion.button
-                  className="brain-boom-btn mx-auto relative group"
-                  whileHover={{ 
-                    scale: 1.05,
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="relative z-10">Got it!</span>
-                  <motion.span 
-                    className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl z-0 opacity-0 group-hover:opacity-100"
-                    initial={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-};
+import { Outlet, useNavigate } from "react-router-dom";
+import SpaceMenuPage from "./SpaceMenuPage";
 
 const SpacePage = () => {
   const { session, newSession, setSession } = useSession();
-  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, setShouldConnect} = useWebSocketContext();
+  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, setShouldConnect, shareClipBoard} = useWebSocketContext();
   const { deviceType } = useDeviceType();
   const [isJoinBeamOpen, setIsSetJoinBeamOpen] = useState(false);
+  const [isSpaceMenuOpen, setIsSpaceMenuOpen] = useState(false);
 
   useEffect(() => {
     if (lastJsonMessage != null) {
@@ -191,6 +48,25 @@ const SpacePage = () => {
     }
   };
 
+  const handleCreateNote = () => {
+    toast.success("Create note functionality coming soon!");
+  };
+
+  const handlePasteContent = (content) => {
+    if (content && content.trim()) {
+      if (sharedClipboards.filter((cb) => cb.content == content.trim()).length == 0) {
+        shareClipBoard(content);
+      }
+      toast.success("Content pasted successfully!");
+    } else {
+      toast.error("Clipboard is empty!")
+    }
+  };
+
+  const handleShareWorkspace = () => {
+    handleShareBeam();
+  };
+
   return (
     <>
       <section
@@ -213,9 +89,9 @@ const SpacePage = () => {
                 <button className="brain-boom-btn" onClick={() => setIsSetJoinBeamOpen(true)}>Join Beam</button></>}
             </div>
         </> : ''}
-        {sharedClipboards.length == 0 && <h4>Share Clipboards / Links / Pictures / Videos</h4>}
+        {sharedClipboards.length == 0 && <h4 className="text-center">Share Clipboards / Links / Pictures / Videos</h4>}
         {sharedClipboards.length == 0 && <div className="flex flex-col sm:flex-row gap-8 mt-2 brain-boom-btns">
-          <KnowMoreButton />
+          {/* <KnowMoreButton /> */}
           <a
             href="https://github.com/khaled-muhammad/moveit"
             target="_blank"
@@ -235,13 +111,17 @@ const SpacePage = () => {
             </div>
           </div>
         )}
-        {sharedClipboards.length > 0 && <div className="absolute top-4 right-5 z-20">
-          <button className="from-purple-500 to-[#7F5AF0] drop-shadow-xl drop-shadow-purple-500/50 bg-gradient-to-b p-2 rounded-full">
+        {session && <div className="absolute top-4 right-5 z-20">
+          <button
+            className="from-purple-500 to-[#7F5AF0] drop-shadow-xl drop-shadow-purple-500/50 bg-gradient-to-b p-2 rounded-full hover:scale-110 transition-transform duration-200"
+            onClick={() => setIsSpaceMenuOpen(true)}
+          >
             <FiPlus size={25} />
           </button>
         </div>}
         {/* {sharedClipboards.length > 0 && <StickyNoteContainer />} */}
       </section>
+      <Outlet />
       <AnimatePresence>
         {isJoinBeamOpen && (
           <motion.div 
@@ -297,6 +177,15 @@ const SpacePage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {isSpaceMenuOpen && (
+        <SpaceMenuPage
+          onClose={() => setIsSpaceMenuOpen(false)}
+          onCreate={handleCreateNote}
+          onPaste={handlePasteContent}
+          onShare={handleShareWorkspace}
+        />
+      )}
     </>
   );
 };
