@@ -13,6 +13,8 @@ import { isValidUUIDv4 } from "../utils";
 import StaticStickyNote from "../components/StaticStickyNote";
 import { Outlet, useNavigate } from "react-router-dom";
 import SpaceMenuPage from "./SpaceMenuPage";
+import { CloseButton } from "../components/closeBtn";
+import NoteForm from "../components/NoteForm";
 
 const SpacePage = () => {
   const { session, newSession, setSession } = useSession();
@@ -20,6 +22,7 @@ const SpacePage = () => {
   const { deviceType } = useDeviceType();
   const [isJoinBeamOpen, setIsSetJoinBeamOpen] = useState(false);
   const [isSpaceMenuOpen, setIsSpaceMenuOpen] = useState(false);
+  const [isNoteEditorFullScreen, setIsNoteEditorFullScreen] = useState(false);
 
   useEffect(() => {
     if (lastJsonMessage != null) {
@@ -49,7 +52,7 @@ const SpacePage = () => {
   };
 
   const handleCreateNote = () => {
-    toast.success("Create note functionality coming soon!");
+    setIsNoteEditorFullScreen(true)
   };
 
   const handlePasteContent = (content) => {
@@ -185,6 +188,16 @@ const SpacePage = () => {
           onShare={handleShareWorkspace}
         />
       )}
+
+      {isNoteEditorFullScreen && <div className="h-[100vh] w-[100%] overflow-y-auto purple-scrollbar fixed bg-violet-600/20 backdrop-blur-md inset-0 z-[999999999999]"><NoteForm
+        onCancel={() => {
+          setIsNoteEditorFullScreen(false);
+        }}
+        onSave={(note) => {
+          shareClipBoard(note, 'lexi_note')
+          setIsNoteEditorFullScreen(false);
+        }}
+      /></div>}
     </>
   );
 };

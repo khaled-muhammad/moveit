@@ -205,7 +205,7 @@ const StaticStickyNote = ({ content, type, index, onRemove }) => {
         {type == "lexi_note" && <div>
           <h3 className="text-lg font-semibold mb-2">{content.title}</h3>
           <div className="lexical-content-reader">
-            <LexicalReader editorState={content.content} />
+            <LexicalReader editorState={JSON.stringify(content.content)} />
           </div>
         </div>}
       </div>
