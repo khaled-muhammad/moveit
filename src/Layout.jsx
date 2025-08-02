@@ -25,9 +25,13 @@ const Layout = () => {
 
   return (
     <WebSocketProvider session={session}>
-      <div className="min-h-[100%] flex flex-col justify-between items-center gap-5">
+      <div className="h-[100%] flex flex-col justify-between items-center gap-5">
         <Logo className="text-4xl z-[91474836489999999]" />
+        <main className="flex-1 overflow-hidden flex flex-col">
+
         <Outlet />
+        </main>
+
         {isMobile && (
           <div className="nav-bar py-5 border-t-3 border-t-[#7F5AF0] w-full">
             <ul className="w-full flex justify-around">
