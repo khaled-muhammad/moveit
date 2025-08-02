@@ -257,7 +257,7 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         {type == "video" && <video autoPlay loop className="rounded-2xl max-w-full h-auto pointer-events-none"><source src={content} type="video/mp4" />Your browser does not support the video tag.</video>}
         {type == "lexi_note" && <div>
           <h3 className="text-lg font-semibold mb-2">{content.title}</h3>
-          <div className="lexical-content-reader">
+          <div className="lexical-content-reader scrollbar-on-purple">
             <LexicalReader editorState={JSON.stringify(content.content)} />
           </div>
         </div>}
