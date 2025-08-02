@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiGithub, FiInfo, FiX } from "react-icons/fi";
+import { FiGithub, FiInfo, FiPlus, FiX } from "react-icons/fi";
 import { useSession } from "../components/SessionProvider";
 import { useWebSocketContext } from "../components/WebSocketProvider";
 import QRCodeDisplay from "../components/QRCodeDisplay";
@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import useDeviceType from "../hooks/deviceType"
 import { isValidUUIDv4 } from "../utils";
+import StaticStickyNote from "../components/StaticStickyNote";
 
 const KnowMoreButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -194,7 +195,7 @@ const SpacePage = () => {
     <>
       <section
         id="main"
-        className="flex flex-1 justify-center items-center gap-5 flex-col"
+        className="flex flex-1 justify-center items-center gap-5 flex-col overflow-hidden"
       >
         {/* <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md">
           {connectedDevices.length > 1 && session && (
@@ -224,6 +225,20 @@ const SpacePage = () => {
             <FiGithub />
             GitHub Repo
           </a>
+        </div>}
+        {sharedClipboards.length > 0 && (
+          <div className="md:hidden w-full flex flex-col flex-1 overflow-hidden mt-20 relative z-10">
+            <div className="flex-1 overflow-y-auto flex flex-col gap-2 px-4 pb-24">
+              {sharedClipboards.map((clip) => (
+                <StaticStickyNote key={clip.id} content={clip.content} type={clip.extra} index={clip.id} />
+              ))}
+            </div>
+          </div>
+        )}
+        {sharedClipboards.length > 0 && <div className="absolute top-4 right-5 z-20">
+          <button className="from-purple-500 to-[#7F5AF0] drop-shadow-xl drop-shadow-purple-500/50 bg-gradient-to-b p-2 rounded-full">
+            <FiPlus size={25} />
+          </button>
         </div>}
         {/* {sharedClipboards.length > 0 && <StickyNoteContainer />} */}
       </section>
