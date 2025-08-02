@@ -157,11 +157,9 @@ const KnowMoreButton = () => {
   );
 };
 
-
-
 const SpacePage = () => {
   const { session, newSession, setSession } = useSession();
-  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards} = useWebSocketContext();
+  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, setShouldConnect} = useWebSocketContext();
   const { deviceType } = useDeviceType();
   const [isJoinBeamOpen, setIsSetJoinBeamOpen] = useState(false);
 
@@ -215,7 +213,7 @@ const SpacePage = () => {
             </div>
         </> : ''}
         {sharedClipboards.length == 0 && <h4>Share Clipboards / Links / Pictures / Videos</h4>}
-        {sharedClipboards.length == 0 && <div className="flex gap-8 mt-2 brain-boom-btns">
+        {sharedClipboards.length == 0 && <div className="flex flex-col sm:flex-row gap-8 mt-2 brain-boom-btns">
           <KnowMoreButton />
           <a
             href="https://github.com/khaled-muhammad/moveit"
@@ -227,8 +225,7 @@ const SpacePage = () => {
             GitHub Repo
           </a>
         </div>}
-        {sharedClipboards.length > 0 && <StickyNoteContainer />}
-        {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
+        {/* {sharedClipboards.length > 0 && <StickyNoteContainer />} */}
       </section>
       <AnimatePresence>
         {isJoinBeamOpen && (
@@ -275,6 +272,7 @@ const SpacePage = () => {
                             beam_id: value.target.value,
                             beam_key: null
                         })
+                        setShouldConnect('auto')
                         setIsSetJoinBeamOpen(false)
                         toast('Joined Beam successfully')
                     }
