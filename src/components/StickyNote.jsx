@@ -2,6 +2,49 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import {
+  ParagraphNode,
+  TextNode,
+} from 'lexical';
+import ExampleTheme from './ExampleTheme';
+import { ImageNode } from './plugins/ImageNode.jsx';
+
+
+const readerConfig = {
+  namespace: 'StickyNote Reader',
+  nodes: [ParagraphNode, TextNode, ImageNode],
+  onError(error) {
+    console.error('Lexical reader error:', error);
+  },
+  theme: ExampleTheme,
+  editable: false,
+};
+
+const LexicalReader = ({ editorState }) => {
+  return (
+    <LexicalComposer initialConfig={{ ...readerConfig, editorState }}>
+      <div className="editor-container">
+        <div className="editor-inner">
+          <RichTextPlugin
+            contentEditable={
+              <ContentEditable
+                className="editor-input"
+                readOnly={true}
+              />
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <HistoryPlugin />
+        </div>
+      </div>
+    </LexicalComposer>
+  );
+};
 
 const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onMove, cameraPosition, worldX, worldY }) => {
   const colors = [
@@ -212,6 +255,12 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
           </div>
         )}
         {type == "video" && <video autoPlay loop className="rounded-2xl max-w-full h-auto pointer-events-none"><source src={content} type="video/mp4" />Your browser does not support the video tag.</video>}
+        {type == "lexi_note" && <div>
+          <h3 className="text-lg font-semibold mb-2">{content.title}</h3>
+          <div className="lexical-content-reader">
+            <LexicalReader editorState={JSON.stringify(content.content)} />
+          </div>
+        </div>}
       </div>
     </motion.div>
   );
