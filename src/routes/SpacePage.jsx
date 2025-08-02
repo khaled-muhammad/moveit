@@ -162,7 +162,6 @@ const SpacePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <input type="text" placeholder="Enter Beam ID" className="outline-0" onChange={(value) => {
                     if (isValidUUIDv4(value.target.value)) {
-                        toast(value.target.textContent)
                         setSession({
                             beam_id: value.target.value,
                             beam_key: null

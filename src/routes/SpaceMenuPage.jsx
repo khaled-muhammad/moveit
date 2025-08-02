@@ -71,7 +71,7 @@ const SpaceMenuPage = ({ onClose, onCreate, onPaste, onShare }) => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[91474836489999999] flex flex-col items-center justify-center"
+          className="fixed inset-0 bg-violet-950/50 backdrop-blur-sm z-[91474836489999999] flex flex-col items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -135,8 +135,8 @@ const SpaceMenuPage = ({ onClose, onCreate, onPaste, onShare }) => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <p className="text-gray-500 text-xs">
-              Tap X or click outside to close
+            <p className="text-gray-500 text-xs flex items-center gap-1">
+              Tap <FiX color="white" /> or click outside to close
             </p>
           </motion.div>
         </motion.div>

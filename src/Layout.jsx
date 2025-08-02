@@ -27,7 +27,7 @@ const Layout = () => {
     <WebSocketProvider session={session}>
       <div className="h-[100%] flex flex-col justify-between items-center gap-5">
         <Logo className="text-4xl z-[91474836489999999]" />
-        <main className="flex-1 overflow-hidden flex flex-col">
+        <main className="flex-1 flex flex-col">
 
         <Outlet />
         </main>

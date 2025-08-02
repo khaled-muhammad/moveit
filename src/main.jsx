@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./Layout.jsx";
 import SpacePage from "./routes/SpacePage.jsx";
 import { SessionProvider } from "./components/SessionProvider";
+import SpaceMenuPage from "./routes/SpaceMenuPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   //<StrictMode>
@@ -18,7 +19,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="space" element={<SpacePage />} />
         </Route>
       </Routes>
-      <Toaster />
+      <Toaster position="bottom-center" />
     </BrowserRouter>
   </SessionProvider>
 
