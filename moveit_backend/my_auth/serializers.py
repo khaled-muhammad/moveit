@@ -6,11 +6,11 @@ class RegisterModelSerializer(serializers.ModelSerializer):
     first_name    = serializers.CharField(required=False)
     last_name     = serializers.CharField(required=False)
     phone_number  = serializers.CharField(write_only=True, required=False)
-    profile_image = serializers.ImageField(write_only=True, required=False)
+    profile_picture = serializers.ImageField(write_only=True, required=False)
 
     class Meta:
         model  = User
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'phone_number', 'profile_image']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'phone_number', 'profile_picture']
         extra_kwargs = {'password': {'write_only': True}}
     
     def create(self, validated_data):
