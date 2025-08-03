@@ -15,12 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from beam.views import GenerateBeamView, ZeroXZeroUploadView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/auth/', include('my_auth.urls')),
     path('api/beams/create/', GenerateBeamView.as_view(), name='generate-beam'),
-    path('api/upload/', ZeroXZeroUploadView.as_view(), name='zeroxzero-upload')
+    path('api/upload/', ZeroXZeroUploadView.as_view(), name='zeroxzero-upload'),
 ]

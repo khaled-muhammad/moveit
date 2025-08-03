@@ -14,8 +14,8 @@ class RegisterModelSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
     
     def create(self, validated_data):
-        phone_number  = validated_data.pop('phone_number')
-        profile_image = validated_data.pop('profile_image', None)
+        phone_number    = validated_data.pop('phone_number', None)
+        profile_picture = validated_data.pop('profile_picture', None)
 
         user = User.objects.create_user(
             username = validated_data['username'],
@@ -27,8 +27,8 @@ class RegisterModelSerializer(serializers.ModelSerializer):
 
         profile = user.profile
         profile.phone_number = phone_number
-        if profile_image:
-            profile.profile_image = profile_image
+        if profile_picture:
+            profile.profile_picture = profile_picture
         profile.save()
 
         return user

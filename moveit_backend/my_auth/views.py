@@ -23,7 +23,7 @@ class RegisterView(APIView):
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'phone_number': user.profile.phone_number,
-                    'profile_image': request.build_absolute_uri(user.profile.profile_image.url) if user.profile.profile_image else None,
+                    'profile_picture': request.build_absolute_uri(user.profile.profile_picture.url) if user.profile.profile_picture else None,
                 },
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
