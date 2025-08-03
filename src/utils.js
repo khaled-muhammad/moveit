@@ -24,3 +24,20 @@ export const uploadToUguu = async (file) => {
     return null;
   }
 };
+
+function toCamelCase(str) {
+  return str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
+}
+
+export const convertKeysToCamelCase = (obj) => {
+  const newObj = {};
+
+  for (const key in obj) {
+    if (Object.hasOwn(obj, key)) {
+      const camelKey = toCamelCase(key);
+      newObj[camelKey] = obj[key];
+    }
+  }
+
+  return newObj;
+}
