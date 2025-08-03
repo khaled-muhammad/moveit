@@ -93,7 +93,6 @@ class CookieTokenRefreshView(TokenRefreshView):
 @permission_classes([IsAuthenticated])
 def fetch_me(request):
     user    = request.user
-    profile = user.profile
 
     response = Response({
         'user': {
@@ -102,7 +101,7 @@ def fetch_me(request):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email,
-            'profile_picture': profile.profile_picture,
+            'profile_picture': request.build_absolute_uri(user.profile.profile_picture.url) if user.profile.profile_picture else None,
         }
     })
 
@@ -111,13 +110,13 @@ def fetch_me(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
-    email = request.data.get('email')
+    username = request.data.get('username')
     password = request.data.get('password')
 
-    if not email or not password:
-        return Response({'detail': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not username or not password:
+        return Response({'detail': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = authenticate(request, username=email, password=password)
+    user = authenticate(request, username=username, password=password)
 
     if user is None:
         return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -130,13 +129,12 @@ def login_view(request):
     access = refresh.access_token
 
     # Set cookies
-    profile = user.profile
     response = Response({
         'user': {
             'id': user.id,
             'name': user.get_full_name(),
             'email': user.email,
-            'image': profile.profile_picture,
+            'profile_picture': request.build_absolute_uri(user.profile.profile_picture.url) if user.profile.profile_picture else None,
         }
     })
 
