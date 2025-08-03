@@ -16,7 +16,7 @@ class RegisterView(APIView):
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
             
-            return Response({
+            res = Response({
                 'user': {
                     'username': user.username,
                     'email': user.email,
@@ -25,8 +25,26 @@ class RegisterView(APIView):
                     'phone_number': user.profile.phone_number,
                     'profile_picture': request.build_absolute_uri(user.profile.profile_picture.url) if user.profile.profile_picture else None,
                 },
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
             }, status=status.HTTP_201_CREATED)
+
+            res.set_cookie(
+                key='access_token',
+                value=str(refresh.access_token),
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=86400 * 15
+            )
+
+            res.set_cookie(
+                key='refresh_token',
+                value=str(refresh),
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=86400 * 30  # 30 day
+            )
+
+            return res
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

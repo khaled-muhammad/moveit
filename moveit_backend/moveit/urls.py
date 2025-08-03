@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 from beam.views import GenerateBeamView, ZeroXZeroUploadView
 
@@ -25,3 +27,5 @@ urlpatterns = [
     path('api/beams/create/', GenerateBeamView.as_view(), name='generate-beam'),
     path('api/upload/', ZeroXZeroUploadView.as_view(), name='zeroxzero-upload'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
