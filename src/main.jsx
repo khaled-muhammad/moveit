@@ -8,6 +8,8 @@ import Layout from "./Layout.jsx";
 import SpacePage from "./routes/SpacePage.jsx";
 import { SessionProvider } from "./components/SessionProvider";
 import SpaceMenuPage from "./routes/SpaceMenuPage.jsx";
+import LoginPage from "./routes/LoginPage.jsx";
+import RegisterPage from "./routes/RegisterPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   //<StrictMode>
@@ -17,6 +19,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="" element={<Layout />}>
           <Route index element={<App />} />
           <Route path="space" element={<SpacePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
         </Route>
       </Routes>
       <Toaster position="bottom-center" />
