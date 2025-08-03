@@ -15,7 +15,7 @@ import {
   FiX,
 } from "react-icons/fi"
 import TakingNotesAmico from "../assets/Taking notes-amico.svg"
-import { NavLink } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import { api } from "../consts"
 import toast from "react-hot-toast"
 import { convertKeysToCamelCase } from "../utils"
@@ -35,6 +35,7 @@ const RegisterPage = () => {
   const [previewImage, setPreviewImage] = useState(null)
   const [imageError, setImageError] = useState("")
   const [isImageLoading, setIsImageLoading] = useState(false)
+  const navigate = useNavigate();
 
   const validateImage = (file) => {
     const maxSize = 5 * 1024 * 1024 // 5MB
@@ -192,8 +193,9 @@ const RegisterPage = () => {
         },
       })
 
-      console.log(response.data)
-      toast("Registered Successfully!")
+      localStorage.setItem('user', JSON.stringify(response.data.user))
+      toast.success("Registered Successfully!")
+      navigate('/')
     } catch (err) {
       if (err.response?.data) {
         setFormErrors(convertKeysToCamelCase(err.response.data))
