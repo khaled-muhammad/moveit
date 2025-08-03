@@ -746,3 +746,9 @@ html, body {
   height: auto;
   border-radius: 4px;
 }
+
+.form-bg {
+  background-image: url('./assets/form-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
