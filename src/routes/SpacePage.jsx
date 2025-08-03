@@ -114,7 +114,7 @@ const SpacePage = () => {
             </div>
           </div>
         )}
-        {session && <div className="absolute top-4 right-5 z-20">
+        {session && <div className="absolute top-4 right-5 z-[900000000000]">
           <button
             className="from-purple-500 to-[#7F5AF0] drop-shadow-xl drop-shadow-purple-500/50 bg-gradient-to-b p-2 rounded-full hover:scale-110 transition-transform duration-200"
             onClick={() => setIsSpaceMenuOpen(true)}
