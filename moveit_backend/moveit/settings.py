@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     #my apps
-    'my_auth',
+    'my_auth.apps.MyAuthConfig',
     'beam',
 ]
 
@@ -152,7 +152,9 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
 
 
