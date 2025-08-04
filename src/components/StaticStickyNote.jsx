@@ -65,7 +65,7 @@ const StaticStickyNote = ({ content, type, index, onRemove }) => {
   return (
     <motion.div
       ref={noteRef}
-      className={`bg-gradient-to-br ${colorClass} p-4 rounded-lg shadow-lg w-64`}
+      className={`bg-gradient-to-br ${colorClass} p-4 rounded-lg shadow-lg`}
       style={{
         zIndex,
         boxShadow: '0 4px 20px rgba(127, 90, 240, 0.3)',
