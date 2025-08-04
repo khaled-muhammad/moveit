@@ -74,7 +74,7 @@ const SpacePage = () => {
     <>
       <section
         id="main"
-        className="flex flex-1 justify-center items-center gap-5 flex-col overflow-hidden"
+        className="flex flex-1 justify-center items-center gap-5 flex-col overflow-hidden mt-20"
       >
         {/* <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md">
           {connectedDevices.length > 1 && session && (
@@ -114,7 +114,7 @@ const SpacePage = () => {
             </div>
           </div>
         )}
-        {session && <div className="absolute top-4 right-5 z-[900000000000]">
+        {session && <div className="fixed top-4 right-5 z-[900000000000]">
           <button
             className="from-purple-500 to-[#7F5AF0] drop-shadow-xl drop-shadow-purple-500/50 bg-gradient-to-b p-2 rounded-full hover:scale-110 transition-transform duration-200"
             onClick={() => setIsSpaceMenuOpen(true)}

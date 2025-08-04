@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { CloseButton } from "../components/closeBtn";
 import NoteForm from "../components/NoteForm";
+import { useAuth } from "../contexts/AuthContext";
 
 const KnowMoreButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -162,6 +163,7 @@ const DesktopPage = () => {
   const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, shareClipBoard, setShouldConnect} = useWebSocketContext();
   const queryParams = new URLSearchParams(window.location.search);
   const queryBeamId = queryParams.get('beam_id');
+  const { user, isAuthenticated, logout, isLoading } = useAuth();
   
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
   const [isNoteEditorFullScreen, setIsNoteEditorFullScreen] = useState(false);
@@ -260,7 +262,7 @@ const DesktopPage = () => {
         id="main"
         className="flex justify-center items-center gap-5 flex-col min-h-[100vh]"
       >
-        <div className="fixed top-0 right-0 mt-8 mr-8 bg-white rounded-md z-[11]">
+        <div className={`fixed bottom-0 left-0 mb-8 ml-8 bg-white rounded-md z-[11]`}>
           {connectedDevices.length > 1 && session && (
             <div className="relative group hover:cursor-pointer" onClick={() => {
             navigator.clipboard.writeText(session.beam_id)
