@@ -169,27 +169,24 @@ const DesktopPage = () => {
   const [isNoteEditorFullScreen, setIsNoteEditorFullScreen] = useState(false);
   const [messageInput, setMessageInput] = useState('');
 
-  useState(() => {
-    if (isConnected) {
-      return;
-    } else {
-      console.log("NEEDS TO CONNECT")
-    }
-    if (queryBeamId != null) {
+  useEffect(() => {
+    if (queryBeamId != null && (!session || session.beam_id !== queryBeamId)) {
+      console.log("Setting session from URL beam_id:", queryBeamId)
       setSession({
         beam_id: queryBeamId,
         beam_key: null
       })
       const url = new URL(window.location.href)
       window.history.replaceState({}, '', url)
-    } else if (session != null) {
-      setSession({
-        beam_id: session.beam_id,
-        beam_key: null
-      })
     }
-    setShouldConnect('auto')
-  }, [queryBeamId])
+  }, [queryBeamId, session?.beam_id])
+
+  useEffect(() => {
+    if (session != null) {
+      console.log("Session beam_id:", session.beam_id)
+      setShouldConnect('auto')
+    }
+  }, [session?.beam_id, setShouldConnect])
 
   useEffect(() => {
     if (lastJsonMessage != null) {

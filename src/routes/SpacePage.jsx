@@ -88,7 +88,12 @@ const SpacePage = () => {
 
         {['mobile', 'tablet'].includes(deviceType) && sharedClipboards.length == 0? <>
             <div className="flex gap-8">
-                {sharedClipboards.length == 0 && session? <button className="brain-boom-btn" onClick={handleShareBeam}>Share</button> : <><button className="brain-boom-btn" onClick={newSession}>New Beam</button>
+                {sharedClipboards.length == 0 && session? <button className="brain-boom-btn" onClick={handleShareBeam}>Share</button> : <><button className="brain-boom-btn" onClick={() => {
+                  newSession().then(() => {
+                    setShouldConnect('auto')
+                  })
+
+                }}>New Beam</button>
                 <button className="brain-boom-btn" onClick={() => setIsSetJoinBeamOpen(true)}>Join Beam</button></>}
             </div>
         </> : ''}

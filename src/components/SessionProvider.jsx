@@ -25,21 +25,19 @@ export const SessionProvider = ({ children }) => {
     }
   }, []);
 
-  const newSession = () => {
-      api
-    .post("beams/create/")
-    .then((response) => {
-      console.log("Beam created:", response.data);
+  const newSession = async () => {
+    try {
+      const response = await api.post("beams/create/")
+      console.log("Beam created:", response.data)
       const expiresAt = new Date(
         Date.now() + 24 * 60 * 60 * 1000
-      ).toISOString();
-      const newSession = { ...response.data, expiresAt: expiresAt };
-      setSession(newSession);
-      localStorage.setItem("session", JSON.stringify(newSession));
-    })
-    .catch((error) => {
-      console.error("Error creating beam:", error);
-    });
+      ).toISOString()
+      const newSession = { ...response.data, expiresAt: expiresAt }
+      setSession(newSession)
+      localStorage.setItem("session", JSON.stringify(newSession))
+    } catch (error) {
+      console.error("Error creating beam:", error)
+    }
   }
 
   const value = {
