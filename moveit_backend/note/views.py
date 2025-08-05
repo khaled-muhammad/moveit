@@ -3,8 +3,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.utils import timezone
 from .models import Note
 from .serializers import NoteSerializer, NoteListSerializer, NoteCreateSerializer
+from beam.models import Beam
 from django.db import models
 
 class NoteViewSet(viewsets.ModelViewSet):
@@ -12,7 +14,7 @@ class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
     
     def get_queryset(self):
-        return Note.objects.filter(user=self.request.user).order_by('-updated_at')
+        return Note.objects.filter(user=self.request.user).select_related('beam').order_by('-updated_at')
     
     def get_serializer_class(self):
         if self.action == 'list':
@@ -34,6 +36,17 @@ class NoteViewSet(viewsets.ModelViewSet):
         note_type = request.query_params.get('note_type', None)
         if note_type:
             queryset = queryset.filter(note_type=note_type)
+        
+        archived = request.query_params.get('archived', None)
+        if archived is not None:
+            if archived.lower() == 'true':
+                queryset = queryset.filter(archived_at__isnull=False)
+            else:
+                queryset = queryset.filter(archived_at__isnull=True)
+        
+        beam_id = request.query_params.get('beam_id', None)
+        if beam_id:
+            queryset = queryset.filter(beam__beam_id=beam_id)
         
         search = request.query_params.get('search', None)
         if search:
@@ -77,6 +90,8 @@ class NoteViewSet(viewsets.ModelViewSet):
             'total_notes': queryset.count(),
             'notes_by_type': {},
             'recent_notes': queryset[:5].count(),
+            'archived_notes': queryset.filter(archived_at__isnull=False).count(),
+            'shared_notes': queryset.filter(beam__isnull=False).count(),
         }
         
         for note_type in ['text', 'lexi_note', 'image', 'audio', 'video']:
@@ -94,11 +109,29 @@ class NoteDetailView(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def archive(self, request, pk=None):
         note = self.get_object()
-        # XXX 'archived' field in model
+        note.archived_at = timezone.now()
+        note.save()
         return Response({'message': 'Note archived successfully'})
+    
+    @action(detail=True, methods=['post'])
+    def unarchive(self, request, pk=None):
+        note = self.get_object()
+        note.archived_at = None
+        note.save()
+        return Response({'message': 'Note unarchived successfully'})
     
     @action(detail=True, methods=['post'])
     def share(self, request, pk=None):
         note = self.get_object()
-        #XXX
-        return Response({'message': 'Note shared successfully'})
+        beam_id = request.data.get('beam_id')
+        
+        if beam_id:
+            try:
+                beam = Beam.objects.get(beam_id=beam_id)
+                note.beam = beam
+                note.save()
+                return Response({'message': 'Note shared successfully'})
+            except Beam.DoesNotExist:
+                return Response({'error': 'Beam not found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'error': 'beam_id is required'}, status=status.HTTP_400_BAD_REQUEST)
