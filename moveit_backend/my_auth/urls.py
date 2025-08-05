@@ -21,7 +21,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import RegisterView, fetch_me, login_view, logout_view, CookieTokenRefreshView
+from .views import RegisterView, fetch_me, login_view, logout_view, CookieTokenRefreshView, delete_account_view
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
@@ -30,4 +30,5 @@ urlpatterns = [
     path('me/', fetch_me, name='fetch_me'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('delete-account/', delete_account_view, name='delete_account'),
 ]

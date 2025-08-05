@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from datetime import timedelta
 
 from .serializers import RegisterModelSerializer
@@ -157,6 +158,49 @@ def login_view(request):
     )
 
     return response
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_account_view(request):
+    user     = request.user
+    password = request.data.get('password')
+    
+    if not password:
+        return Response({
+            'detail': 'Password confirmation is required to delete your account.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not user.check_password(password):
+        return Response({
+            'detail': 'Invalid password. Please provide your current password to confirm account deletion.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        username = user.username
+        user.delete()
+        
+        response = Response({
+            'detail': f'Account "{username}" has been permanently deleted.'
+        }, status=status.HTTP_200_OK)
+        
+        response.delete_cookie(
+            key='access_token',
+            path='/',
+            samesite='None',
+        )
+        
+        response.delete_cookie(
+            key='refresh_token',
+            path='/',
+            samesite='None',
+        )
+        
+        return response
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while deleting your account. Please try again.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
