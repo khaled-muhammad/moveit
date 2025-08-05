@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/auth/', include('my_auth.urls')),
     path('api/beams/create/', GenerateBeamView.as_view(), name='generate-beam'),
     path('api/upload/', ZeroXZeroUploadView.as_view(), name='zeroxzero-upload'),
+    path('api/', include('note.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
