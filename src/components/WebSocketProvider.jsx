@@ -25,15 +25,25 @@ export const WebSocketProvider = ({ children, session }) => {
     sendJsonMessage({ type: 'auth', message: session?.beam_key })
   }
 
-  const loadBeamNotes = async (beamId) => {
-    if (!beamId) return
+  const loadBeamNotes = async (beamId, caller = 'unknown') => {
+    console.log(`🔍 loadBeamNotes called from: ${caller}`);
     
-    setIsLoadingNotes(true)
+    if (!beamId) {
+      console.log(`❌ No beamId provided, returning early`);
+      return;
+    }
+    
+    setIsLoadingNotes(true);
+    console.log(`🔄 Setting isLoadingNotes to true`);
+    
     try {
+      console.log(`📡 Making API call to /notes/beam_notes/ with beam_id: ${beamId}`);
       const response = await api.get('/notes/beam_notes/', {
         params: { beam_id: beamId },
         withCredentials: true
-      })
+      });
+      
+      console.log(`✅ API response received:`, response.data);
       
       if (response.data) {
         const convertedNotes = response.data.map((note, index) => ({
@@ -45,24 +55,38 @@ export const WebSocketProvider = ({ children, session }) => {
           isBeamNote: true,
           noteData: note,
           index: index
-        }))
+        }));
+        
+        console.log(`🔄 Converting ${response.data.length} notes to UI format`);
+        console.log(`📝 Converted notes:`, convertedNotes);
         
         setSharedClipboards(prev => {
-          const nonBeamNotes = prev.filter(item => !item.isBeamNote)
-          return [...nonBeamNotes, ...convertedNotes]
-        })
+          const nonBeamNotes = prev.filter(item => !item.isBeamNote);
+          const newClipboards = [...nonBeamNotes, ...convertedNotes];
+          console.log(`📋 Updated sharedClipboards:`, newClipboards);
+          return newClipboards;
+        });
         
-        console.log(`Loaded ${response.data.length} notes for beam ${beamId}`)
+        console.log(`✅ Successfully loaded ${response.data.length} notes for beam ${beamId}`);
+      } else {
+        console.log(`⚠️ No data in response for beam ${beamId}`);
       }
     } catch (error) {
-      console.error('Failed to load beam notes:', error)
+      console.error(`❌ Failed to load beam notes for beam ${beamId}:`, error);
+      console.error(`🔍 Error details:`, {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message
+      });
       if (error.response?.status !== 401) {
-        toast.error('Failed to load beam notes')
+        toast.error('Failed to load beam notes');
       }
     } finally {
-      setIsLoadingNotes(false)
+      setIsLoadingNotes(false);
+      console.log(`🔄 Setting isLoadingNotes to false`);
     }
-  }
+  };
 
   const saveBeam = (beamTitle) => {
     sendJsonMessage({
@@ -95,7 +119,7 @@ export const WebSocketProvider = ({ children, session }) => {
         setIsConnected(true)
         console.log(lastJsonMessage.message)
         if (session?.beam_id) {
-          loadBeamNotes(session.beam_id)
+          loadBeamNotes(session.beam_id, 'auth_success')
         }
       } else if (lastJsonMessage.type == 'authed_users') {
         console.log(lastJsonMessage)
@@ -104,13 +128,13 @@ export const WebSocketProvider = ({ children, session }) => {
         setSharedClipboards([...sharedClipboards, {id: Date.now(), content: lastJsonMessage.message, extra: lastJsonMessage.extra}])
         if (lastJsonMessage.extra && lastJsonMessage.extra !== 'text') {
           if (session?.beam_id) {
-            loadBeamNotes(session.beam_id)
+            //loadBeamNotes(session.beam_id, 'share_clipboard') XXX
           }
         }
       } else if (lastJsonMessage.type == 'delete_note') {
         setSharedClipboards(sharedClipboards.filter((cb) => cb.content != lastJsonMessage.message))
         if (session?.beam_id) {
-          loadBeamNotes(session.beam_id)
+          loadBeamNotes(session.beam_id, 'delete_note')
         }
       } else if (lastJsonMessage.type == 'beam_notes_loaded') {
         console.log('Beam notes loaded:', lastJsonMessage.notes)
@@ -124,7 +148,7 @@ export const WebSocketProvider = ({ children, session }) => {
 
   useEffect(() => {
     if (session?.beam_id && isConnected) {
-      loadBeamNotes(session.beam_id)
+      loadBeamNotes(session.beam_id, 'session_connected')
     } else {
       setSharedClipboards(prev => prev.filter(item => !item.isBeamNote))
     }
