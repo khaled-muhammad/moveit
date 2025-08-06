@@ -24,7 +24,7 @@ from beam.views import GenerateBeamView, ZeroXZeroUploadView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('my_auth.urls')),
-    path('api/beams/create/', GenerateBeamView.as_view(), name='generate-beam'),
+    path('api/beams/', include('beam.urls')),
     path('api/upload/', ZeroXZeroUploadView.as_view(), name='zeroxzero-upload'),
     path('api/', include('note.urls')),
 ]
