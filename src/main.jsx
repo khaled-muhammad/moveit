@@ -10,6 +10,7 @@ import { SessionProvider } from "./components/SessionProvider";
 import SpaceMenuPage from "./routes/SpaceMenuPage.jsx";
 import LoginPage from "./routes/LoginPage.jsx";
 import RegisterPage from "./routes/RegisterPage.jsx";
+import ProfilePage from "./routes/ProfilePage.jsx";
 import { AuthProvider } from './contexts/AuthContext.js';
 
 createRoot(document.getElementById("root")).render(
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="space" element={<SpacePage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Routes>
         <Toaster position="bottom-center" />
