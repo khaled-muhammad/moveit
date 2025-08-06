@@ -11,6 +11,7 @@ import SpaceMenuPage from "./routes/SpaceMenuPage.jsx";
 import LoginPage from "./routes/LoginPage.jsx";
 import RegisterPage from "./routes/RegisterPage.jsx";
 import ProfilePage from "./routes/ProfilePage.jsx";
+import BeamsPage from "./routes/BeamsPage.jsx";
 import { AuthProvider } from './contexts/AuthContext.js';
 
 createRoot(document.getElementById("root")).render(
@@ -25,6 +26,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="beams" element={<BeamsPage />} />
           </Route>
         </Routes>
         <Toaster position="bottom-center" />
