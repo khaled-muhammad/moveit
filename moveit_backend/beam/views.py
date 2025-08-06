@@ -134,6 +134,22 @@ class ZeroXZeroUploadView(APIView):
                 'details': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_beams_view(request):
+    try:
+        beams = Beam.objects.filter(user=request.user).order_by('-created_at')
+        serializer = BeamSerializer(beams, many=True)
+        
+        return Response({
+            'beams': serializer.data
+        })
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while fetching your beams.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def share_beam_view(request):
@@ -168,15 +184,14 @@ def share_beam_view(request):
             }, status=status.HTTP_404_NOT_FOUND)
         
         share_data = {
-            'beam': beam,
-            'shared_by': request.user,
-            'shared_with': shared_with_user,
+            'beam': beam.pk,
+            'shared_with': shared_with_user.pk,
             'share_type': share_type
         }
         
         serializer = CreateBeamShareSerializer(data=share_data)
         if serializer.is_valid():
-            share = serializer.save()
+            share = serializer.save(shared_by=request.user)
             return Response({
                 'detail': f'Beam shared successfully with {username}.',
                 'share': BeamShareSerializer(share).data

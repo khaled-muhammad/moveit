@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     GenerateBeamView,
     ZeroXZeroUploadView,
+    get_user_beams_view,
     share_beam_view,
     get_shared_beams_view,
     get_my_shared_beams_view,
@@ -12,6 +13,7 @@ from .views import (
 urlpatterns = [
     path('create/', GenerateBeamView.as_view(), name='create_beam'),
     path('upload/', ZeroXZeroUploadView.as_view(), name='upload_file'),
+    path('', get_user_beams_view, name='get_user_beams'),
     path('share/', share_beam_view, name='share_beam'),
     path('shared-with-me/', get_shared_beams_view, name='get_shared_beams'),
     path('my-shares/', get_my_shared_beams_view, name='get_my_shared_beams'),
