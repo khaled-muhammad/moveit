@@ -5,6 +5,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Beam
+from note.models import Note
 
 NICKNAMES = [
     "PixelPenguin", "CodeCactus", "QuantumKoala", "BitBunny", "HexHawk",
@@ -47,6 +48,30 @@ class BeamConsumer(WebsocketConsumer):
     @database_sync_to_async
     def auth_connection(self, beam_key=None):
         return Beam.objects.filter(beam_id=self.beam_id).exists()
+    
+    @database_sync_to_async
+    def save_clipboard(self, content, content_type, user):
+        try:
+            beam = Beam.objects.get(beam_id=self.beam_id)
+            if content_type != 'lexi_note':
+                note = Note.objects.create(
+                    user=user,
+                    beam=beam,
+                    content=content,
+                    note_type=content_type
+                )
+            else:
+                note = Note.objects.create(
+                    user=user,
+                    beam=beam,
+                    title=content['title'],
+                    json_content=content['content'],
+                    note_type='lexi_note'
+                )
+
+            return note
+        except Beam.DoesNotExist:
+            return None
 
     def assign_client_id(self):
         return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
@@ -125,6 +150,23 @@ class BeamConsumer(WebsocketConsumer):
             "message": event["message"]
         }))
 
+    def share_clipboard(self, event):
+        content = event.get("message")
+        content_type = event.get("extra", "text")
+        
+        if self.scope['user'].is_authenticated:
+            note = async_to_sync(self.save_clipboard)(content, content_type, self.scope['user'])
+            if note:
+                print(f"Saved clipboard as note: {note.id}")
+            else:
+                print("Failed to save clipboard as note")
+        
+        self.send(text_data=json.dumps({
+            "type": "share_clipboard",
+            "message": content,
+            "extra": content_type
+        }))
+
     def auth_users(self, event):
         self.send(text_data=json.dumps({
             "type": "authed_users",
@@ -136,6 +178,8 @@ class BeamConsumer(WebsocketConsumer):
             raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
         
         def handler(event):
+            print("Unlisted:")
+            print(event)
             self.send(text_data=json.dumps({
                 "type": name,
                 "message": event.get("message"),
