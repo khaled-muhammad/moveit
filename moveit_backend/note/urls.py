@@ -7,5 +7,5 @@ router.register(r'notes', NoteViewSet, basename='note')
 router.register(r'note-detail', NoteDetailView, basename='note-detail')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]
