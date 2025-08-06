@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import StickyNote from './StickyNote';
 import { useWebSocketContext } from './WebSocketProvider';
+import toast from 'react-hot-toast';
 
 const StickyNoteContainer = () => {
   const { sharedClipboards, setSharedClipboards, sendJsonMessage } = useWebSocketContext();
@@ -14,6 +15,11 @@ const StickyNoteContainer = () => {
   const animationFrameRef = useRef(null);
 
   const handleRemoveNote = (note) => {
+    if (note.isBeamNote) {
+      toast('Cannot delete beam note from UI (Update Soon)');
+      return;
+    }
+    
     setSharedClipboards(prev => prev.filter((n) => n.id !== note.id));
     sendJsonMessage({
       type: 'delete_note',
@@ -268,17 +274,19 @@ const StickyNoteContainer = () => {
     >
       {renderGrid()}
       <div className="relative w-full h-full infinite-canvas">
-        {sharedClipboards.map((note) => (
+        {sharedClipboards.map((note, index) => (
           <StickyNote
             key={note.id}
             content={note.content}
             type={note.extra}
-            index={note.id}
+            index={note.index !== undefined ? note.index : index}
             onRemove={() => handleRemoveNote(note)}
             constraintsRef={null}
             cameraPosition={cameraPosition}
             worldX={note.worldX}
             worldY={note.worldY}
+            isBeamNote={note.isBeamNote}
+            noteData={note.noteData}
             onMove={(newWorldX, newWorldY) => {
               setSharedClipboards(prev => 
                 prev.map(n => 
