@@ -144,6 +144,18 @@ class BeamConsumer(WebsocketConsumer):
                 }
             )
 
+    @database_sync_to_async
+    def connect_user_with_beam_db(self, beam_name):
+        beam = Beam.objects.get(beam_id=self.beam_id)
+        beam.user = self.scope['user']
+        beam.beam_name = beam_name
+        print(beam.user)
+        beam.save()
+    
+    def save_beam(self, event):
+        print("Connecting user to beam ....")
+        async_to_sync(self.connect_user_with_beam_db)(event['message'])
+
     def beam_message(self, event):
         self.send(text_data=json.dumps({
             "type": "message",
