@@ -85,6 +85,11 @@ class NoteViewSet(viewsets.ModelViewSet):
             return Response({
                 'detail': 'An error occurred while fetching beam notes.'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get_permissions(self):
+        if self.action == 'beam_notes':
+            return []
+        return super().get_permissions()
     
     @action(detail=True, methods=['post'])
     def duplicate(self, request, pk=None):
