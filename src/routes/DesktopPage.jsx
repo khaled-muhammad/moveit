@@ -160,7 +160,7 @@ const KnowMoreButton = () => {
 
 const DesktopPage = () => {
   const { session, setSession } = useSession();
-  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, shareClipBoard, setShouldConnect } = useWebSocketContext();
+  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, shareClipBoard, setShouldConnect, saveBeam } = useWebSocketContext();
   const queryParams = new URLSearchParams(window.location.search);
   const queryBeamId = queryParams.get('beam_id');
   const { user, isAuthenticated, logout, isLoading } = useAuth();
@@ -168,13 +168,16 @@ const DesktopPage = () => {
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
   const [isNoteEditorFullScreen, setIsNoteEditorFullScreen] = useState(false);
   const [messageInput, setMessageInput] = useState('');
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [beamName, setBeamName] = useState('');
 
   useEffect(() => {
     if (queryBeamId != null && (!session || session.beam_id !== queryBeamId)) {
       console.log("Setting session from URL beam_id:", queryBeamId)
       setSession({
         beam_id: queryBeamId,
-        beam_key: null
+        beam_key: null,
+        beam_name: 'Untitled Beam'
       })
       const url = new URL(window.location.href)
       window.history.replaceState({}, '', url)
@@ -184,6 +187,7 @@ const DesktopPage = () => {
   useEffect(() => {
     if (session != null) {
       console.log("Session beam_id:", session.beam_id)
+      console.log(session)
       setShouldConnect('auto')
     }
   }, [session?.beam_id, setShouldConnect])
@@ -253,6 +257,21 @@ const DesktopPage = () => {
     }
   };
 
+  const handleSaveBeam = () => {
+    if (beamName.trim()) {
+      saveBeam(beamName.trim());
+      setShowSaveModal(false);
+      setBeamName('');
+      toast.success('Beam saved successfully!');
+    } else {
+      toast.error('Please enter a beam name');
+    }
+  }
+
+  const handleSaveClick = () => {
+    setShowSaveModal(true);
+  }
+
   return (
     <>
       <section
@@ -299,6 +318,28 @@ const DesktopPage = () => {
           <button className="brain-boom-btn" onClick={pasteClipboard}><FiCopy /> Copy</button>
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
+        
+        {sharedClipboards.length > 0 && isAuthenticated && session.beam_name == null && <motion.div
+          className={`fixed ${isNoteEditorFullScreen ? 'z-[100]' : 'z-[11]'}`}
+          animate={{
+            bottom: isNoteEditorFullScreen ? "20px" : sharedClipboards.length > 0 ? "80px" : "20px",
+            left: isNoteEditorFullScreen ? "auto" : "calc(50% + 120px)",
+          }}
+          transition={{
+            type: "spring", 
+            stiffness: 200, 
+            damping: 25,
+            duration: 0.4
+          }}
+        >
+          <motion.button
+            className="bg-violet-600/20 backdrop-blur-md ring-2 ring-violet-700 p-4 rounded-2xl cursor-pointer hover:bg-violet-500/30 transition-colors shadow-lg"
+            whileTap={{ scale: 0.9 }}
+            onClick={handleSaveClick}
+          >
+            Save
+          </motion.button>
+        </motion.div>}
         
         {
           <motion.div
@@ -442,6 +483,82 @@ const DesktopPage = () => {
         }
         {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
       </section>
+
+      {/* Save Beam Modal */}
+      <AnimatePresence>
+        {showSaveModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowSaveModal(false)}
+          >
+            <motion.div 
+              className="bg-[#1A1B2E] rounded-xl p-6 max-w-md w-full relative"
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: -20 }}
+              transition={{ type: 'spring', damping: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                boxShadow: '0 0 20px rgba(127, 90, 240, 0.5), inset 0 0 10px rgba(127, 90, 240, 0.2)',
+                border: '1px solid rgba(127, 90, 240, 0.3)',
+              }}
+            >
+              <button 
+                className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+                onClick={() => setShowSaveModal(false)}
+              >
+                <FiX size={24} />
+              </button>
+              
+              <h2 className="text-2xl font-bold mb-4 text-center text-white">
+                Save Beam
+              </h2>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Beam Name
+                </label>
+                <input
+                  type="text"
+                  value={beamName}
+                  onChange={(e) => setBeamName(e.target.value)}
+                  placeholder="Enter beam name..."
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                  autoFocus
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSaveBeam();
+                    }
+                  }}
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowSaveModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveBeam}
+                  disabled={!beamName.trim()}
+                  className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+                    beamName.trim() 
+                      ? 'bg-violet-600 hover:bg-violet-700 text-white' 
+                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  Save
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
