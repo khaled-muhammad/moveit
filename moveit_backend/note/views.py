@@ -58,6 +58,34 @@ class NoteViewSet(viewsets.ModelViewSet):
         serializer = NoteListSerializer(queryset, many=True)
         return Response(serializer.data)
     
+    @action(detail=False, methods=['get'])
+    def beam_notes(self, request):
+        beam_id = request.query_params.get('beam_id', None)
+        
+        if not beam_id:
+            return Response({
+                'detail': 'beam_id parameter is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            queryset = Note.objects.filter(
+                beam__beam_id=beam_id
+            ).select_related('user', 'beam').order_by('-created_at')
+            
+            archived = request.query_params.get('archived', 'false')
+            if archived.lower() == 'false':
+                queryset = queryset.filter(archived_at__isnull=True)
+            elif archived.lower() == 'true':
+                queryset = queryset.filter(archived_at__isnull=False)
+            
+            serializer = NoteListSerializer(queryset, many=True)
+            return Response(serializer.data)
+            
+        except Exception as e:
+            return Response({
+                'detail': 'An error occurred while fetching beam notes.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     @action(detail=True, methods=['post'])
     def duplicate(self, request, pk=None):
         note = self.get_object()
