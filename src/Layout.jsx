@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
-import { FiGrid, FiHome, FiUser } from "react-icons/fi";
+import { FiGrid, FiHome, FiUser, FiShare2 } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { useSession } from "./components/SessionProvider";
 import { WebSocketProvider } from "./components/WebSocketProvider";
@@ -30,7 +30,7 @@ const Layout = () => {
       <div className="min-h-[100%] flex flex-col justify-between items-center gap-5">
         <Logo className="text-4xl z-[91474836489999999]" />
         {!isMobile && (
-          <nav className="fixed z-[91474836489999999] top-5 right-5 flex items-center gap-4">
+          <nav className="fixed z-[91474836489999990] top-5 right-5 flex items-center gap-4">
             <div className="bg-[#1A1B2E]/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl px-6 py-3 shadow-2xl"
                  style={{
                    boxShadow: '0 0 40px rgba(127, 90, 240, 0.1), inset 0 0 20px rgba(127, 90, 240, 0.05)'
@@ -50,6 +50,22 @@ const Layout = () => {
                     Home
                   </NavLink>
                 </li>
+                {isAuthenticated && (
+                  <li>
+                    <NavLink 
+                      to='/beams' 
+                      className={({ isActive }) =>
+                        `goldman-regular text-sm font-medium transition-all duration-300 hover:text-purple-400 ${
+                          isActive 
+                            ? 'text-purple-400 relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-purple-400 after:to-indigo-500' 
+                            : 'text-gray-300'
+                        }`
+                      }
+                    >
+                      Beams
+                    </NavLink>
+                  </li>
+                )}
                 {!isAuthenticated && (
                   <li>
                     <NavLink 
@@ -134,7 +150,7 @@ const Layout = () => {
         </main>
 
         {isMobile && (
-          <div className="fixed bottom-0 left-0 right-0 z-[9] p-4">
+          <div className="fixed bottom-0 left-0 right-0 z-[49] p-4">
             <div className="bg-[#1A1B2E]/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl px-6 py-4 shadow-2xl mx-4"
                  style={{
                    boxShadow: '0 0 40px rgba(127, 90, 240, 0.1), inset 0 0 20px rgba(127, 90, 240, 0.05)'
@@ -170,6 +186,23 @@ const Layout = () => {
                     <span className="text-xs goldman-regular">Space</span>
                   </NavLink>
                 </li>
+                {isAuthenticated && (
+                  <li>
+                    <NavLink
+                      to="/beams"
+                      className={({ isActive }) =>
+                        `flex flex-col items-center gap-1 transition-all duration-300 ${
+                          isActive 
+                            ? "text-purple-400" 
+                            : "text-gray-300 hover:text-purple-400"
+                        }`
+                      }
+                    >
+                      <FiShare2 size={24} />
+                      <span className="text-xs goldman-regular">Beams</span>
+                    </NavLink>
+                  </li>
+                )}
                 {!isAuthenticated && (
                   <li>
                     <NavLink
