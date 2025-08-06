@@ -6,3 +6,6 @@ channels_redis
 django-cors-headers
 httpx
 djangorestframework-simplejwt
+dotenv
+psycopg2-binary
+gunicorn

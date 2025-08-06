@@ -1,8 +1,8 @@
 # 🚀 MoveIt
 
-**Instant content sharing between devices. No accounts, no hassle.**
+**Instant content sharing between devices with persistent sessions and collaborative workspaces.**
 
-MoveIt is a modern web application that allows you to easily share content between your devices using QR codes and WebSocket connections. Share text, links, images, audio, and videos instantly without any registration or data storage.
+MoveIt is a modern web application that allows you to easily share content between your devices using QR codes and WebSocket connections. Create persistent beam sessions, share text, links, images, audio, and videos instantly, and collaborate in real-time workspaces.
 
 ![MoveIt Demo](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -11,19 +11,44 @@ MoveIt is a modern web application that allows you to easily share content betwe
 
 ## ✨ Features
 
-- **🔗 Instant Sharing** - Share text, links, images, audio, and videos between devices instantly
-- **📱 No Login Required** - Just scan the QR code with your mobile device and start sharing
-- **🎯 Drag & Drop** - Organize your shared content with interactive sticky notes
-- **🔒 Privacy First** - Your data stays on your devices and is never stored on servers
-- **🌐 Open Source** - Completely open source and free to use
-- **📱 Cross-Platform** - Works on desktop and mobile browsers
-- **⚡ Real-time** - WebSocket-based real-time communication
-- **🎨 Beautiful UI** - Modern, responsive design with smooth animations
+### 🔗 Core Sharing Features
+- **Instant Sharing** - Share text, links, images, audio, and videos between devices instantly
+- **Real-time Collaboration** - Multiple devices can connect to the same beam session
+- **Persistent Sessions** - Beam sessions are saved and can be rejoined later
+- **QR Code Connection** - Quick device pairing using QR codes
+- **Cross-Platform** - Works seamlessly on desktop and mobile browsers
+
+### 📝 Content Management
+- **Rich Note Creation** - Create detailed notes with the Lexi Note editor
+- **Interactive Sticky Notes** - Drag, drop, and organize shared content
+- **File Upload Support** - Upload images, videos, and audio files
+- **Content Types** - Support for text, images, audio, video, and rich notes
+- **Note Archiving** - Archive and manage your notes
+
+### 🔐 Session Management
+- **Beam Sessions** - Create and manage persistent beam sessions
+- **Session Persistence** - Desktop sessions are automatically saved to localStorage
+- **Smart Session Loading** - Automatically creates new sessions when previous ones have content
+- **Session Sharing** - Share beam URLs with others to join your session
+- **Multi-Device Support** - Multiple devices can connect to the same beam
+
+### 🎨 User Experience
+- **Beautiful UI** - Modern, responsive design with smooth animations
+- **Drag & Drop Interface** - Intuitive content organization
+- **Real-time Updates** - All changes appear instantly on connected devices
+- **Toast Notifications** - Elegant feedback for user actions
+- **Responsive Design** - Optimized for both desktop and mobile
+
+### 🔒 Privacy & Security
+- **Privacy First** - Your data stays on your devices
+- **No Registration Required** - Start sharing immediately without accounts
+- **Secure WebSocket Connections** - Encrypted real-time communication
+- **Session-based Authentication** - Secure beam access control
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 19.1.0** - Modern React with hooks
+- **React 19.1.0** - Modern React with hooks and context
 - **Vite** - Fast build tool and dev server
 - **Tailwind CSS** - Utility-first CSS framework
 - **Framer Motion** - Production-ready motion library
@@ -31,6 +56,7 @@ MoveIt is a modern web application that allows you to easily share content betwe
 - **React Hot Toast** - Elegant notifications
 - **React QR Scanner** - QR code scanning capabilities
 - **React QR Code** - QR code generation
+- **React Router** - Client-side routing
 
 ### Backend
 - **Django 5.2.4** - High-level Python web framework
@@ -38,11 +64,13 @@ MoveIt is a modern web application that allows you to easily share content betwe
 - **Django Channels** - WebSocket support for Django
 - **Channels Redis** - Redis channel layer for WebSocket
 - **Django CORS Headers** - Cross-Origin Resource Sharing
+- **Django Authentication** - User authentication and session management
 - **Pillow** - Python Imaging Library
 - **HTTPX** - Modern HTTP client
 
-### Infrastructure
-- **SQLite** - Lightweight database
+### Database & Infrastructure
+- **SQLite** - Lightweight database for development
+- **PostgreSQL** - Production-ready database (configurable)
 - **Redis** - In-memory data structure store (for WebSocket channels)
 - **WebSocket** - Real-time bidirectional communication
 
@@ -116,24 +144,33 @@ MoveIt is a modern web application that allows you to easily share content betwe
 ## 📱 How to Use
 
 ### Desktop Experience
-1. Open MoveIt in your desktop browser
-2. A QR code will be displayed on the screen
-3. Share this QR code with your mobile device
-4. Start sharing content instantly!
+1. **Open MoveIt** in your desktop browser
+2. **Create a Beam Session** - A new beam session is automatically created
+3. **Share the QR Code** - Display the QR code for mobile devices to scan
+4. **Start Sharing Content** - Use the toolbar to share clipboard content or create notes
+5. **Manage Your Session** - Save beam sessions for later use
 
 ### Mobile Experience
-1. Open MoveIt in your mobile browser
-2. Scan the QR code displayed on your desktop
-3. Use the "Copy" button to share clipboard content
-4. Use the "Upload" button to share files
-5. All shared content appears as interactive sticky notes
+1. **Open MoveIt** in your mobile browser
+2. **Scan the QR Code** displayed on your desktop
+3. **Join the Beam Session** - Connect to the shared workspace
+4. **Share Content** - Use the "Copy" button to share clipboard content
+5. **Upload Files** - Share images, videos, and audio files
+6. **View Shared Content** - All content appears as interactive sticky notes
 
-### Features
-- **Text Sharing**: Copy text from your clipboard and share instantly
-- **File Upload**: Upload images, videos, and audio files
-- **Interactive Notes**: Double-click notes to copy content back
-- **Real-time Sync**: All changes appear instantly on connected devices
-- **Privacy**: No data is stored on servers - everything stays on your devices
+### Beam Session Features
+- **Persistent Sessions** - Beam sessions are saved and can be rejoined
+- **Multi-Device Support** - Multiple devices can connect to the same beam
+- **Real-time Collaboration** - All changes appear instantly on connected devices
+- **Session Management** - Create, save, and manage your beam sessions
+- **Content Organization** - Drag and drop to organize shared content
+
+### Content Types
+- **Text Sharing** - Copy text from your clipboard and share instantly
+- **Rich Notes** - Create detailed notes with the Lexi Note editor
+- **File Upload** - Upload images, videos, and audio files
+- **Interactive Notes** - Double-click notes to copy content back
+- **Note Archiving** - Archive and manage your notes
 
 ## 🏗️ Project Structure
 
@@ -144,23 +181,40 @@ moveit/
 │   │   ├── Footer.jsx           # Beautiful footer component
 │   │   ├── Logo.jsx             # Animated logo component
 │   │   ├── QRCodeDisplay.jsx    # QR code generation
-│   │   ├── SessionProvider.jsx  # Session management
+│   │   ├── SessionProvider.jsx  # Beam session management
 │   │   ├── StickyNote.jsx       # Interactive sticky notes
+│   │   ├── StickyNoteContainer.jsx # Note container with drag & drop
+│   │   ├── NoteForm.jsx         # Rich note creation form
 │   │   ├── UploadBtn.jsx        # File upload component
 │   │   └── WebSocketProvider.jsx # WebSocket connection management
 │   ├── routes/                   # Page components
-│   │   ├── DesktopPage.jsx      # Desktop interface
-│   │   └── MobilePage.jsx       # Mobile interface
+│   │   ├── DesktopPage.jsx      # Desktop interface with toolbar
+│   │   ├── MobilePage.jsx       # Mobile interface
+│   │   ├── SpacePage.jsx        # Space management interface
+│   │   ├── BeamsPage.jsx        # Beam session management
+│   │   ├── LoginPage.jsx        # User authentication
+│   │   └── RegisterPage.jsx     # User registration
+│   ├── contexts/                 # React contexts
+│   │   └── AuthContext.tsx      # Authentication context
 │   ├── assets/                   # Static assets
 │   ├── App.jsx                   # Main application component
 │   └── main.jsx                  # Application entry point
 ├── moveit_backend/               # Django backend application
-│   ├── beam/                     # Main Django app
+│   ├── beam/                     # Beam session management
 │   │   ├── consumers.py         # WebSocket consumers
-│   │   ├── models.py            # Database models
+│   │   ├── models.py            # Beam and session models
 │   │   ├── serializers.py       # API serializers
 │   │   ├── views.py             # API views
 │   │   └── routing.py           # WebSocket routing
+│   ├── note/                     # Note management
+│   │   ├── models.py            # Note models
+│   │   ├── serializers.py       # Note serializers
+│   │   ├── views.py             # Note API views
+│   │   └── admin.py             # Django admin configuration
+│   ├── my_auth/                  # Authentication
+│   │   ├── models.py            # User models
+│   │   ├── views.py             # Auth API views
+│   │   └── authentication.py    # Custom authentication
 │   ├── moveit/                   # Django project settings
 │   │   ├── settings.py          # Django configuration
 │   │   ├── urls.py              # URL routing
@@ -186,6 +240,7 @@ DEBUG=True
 SECRET_KEY=your-secret-key-here
 ALLOWED_HOSTS=localhost,127.0.0.1
 CORS_ALLOWED_ORIGINS=http://localhost:5173
+DATABASE_URL=sqlite:///db.sqlite3
 ```
 
 ### Redis Configuration
@@ -276,4 +331,4 @@ If you have any questions or need help, please:
 
 **Made with ❤️ by [Khaled Muhammad](https://github.com/khaled-muhammad)**
 
-*MoveIt - Instant content sharing between devices*
+*MoveIt - Instant content sharing between devices with persistent sessions*
