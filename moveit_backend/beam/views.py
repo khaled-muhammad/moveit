@@ -4,11 +4,14 @@ import secrets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .models import Beam
-from .serializers import BeamSerializer
+from rest_framework.decorators import api_view, permission_classes
+from .models import Beam, BeamShare
+from .serializers import BeamSerializer, BeamShareSerializer, CreateBeamShareSerializer
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponse, Http404
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
@@ -130,3 +133,142 @@ class ZeroXZeroUploadView(APIView):
                 'error': 'Upload failed',
                 'details': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def share_beam_view(request):
+    try:
+        beam_id = request.data.get('beam_id')
+        username = request.data.get('username')
+        share_type = request.data.get('share_type', 'read')
+        
+        if not beam_id or not username:
+            return Response({
+                'detail': 'Beam ID and username are required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            beam = Beam.objects.get(beam_id=beam_id)
+        except Beam.DoesNotExist:
+            return Response({
+                'detail': 'Beam not found.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        if beam.user != request.user:
+            if not BeamShare.objects.filter(beam=beam, shared_with=request.user, share_type='admin').exists():
+                return Response({
+                    'detail': 'You do not have permission to share this beam.'
+                }, status=status.HTTP_403_FORBIDDEN)
+        
+        try:
+            shared_with_user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({
+                'detail': 'User not found.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        share_data = {
+            'beam': beam,
+            'shared_by': request.user,
+            'shared_with': shared_with_user,
+            'share_type': share_type
+        }
+        
+        serializer = CreateBeamShareSerializer(data=share_data)
+        if serializer.is_valid():
+            share = serializer.save()
+            return Response({
+                'detail': f'Beam shared successfully with {username}.',
+                'share': BeamShareSerializer(share).data
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while sharing the beam.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_shared_beams_view(request):
+    try:
+        shares = BeamShare.objects.filter(shared_with=request.user).select_related('beam', 'shared_by')
+        serializer = BeamShareSerializer(shares, many=True)
+        
+        return Response({
+            'shared_beams': serializer.data
+        })
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while fetching shared beams.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_my_shared_beams_view(request):
+    try:
+        shares = BeamShare.objects.filter(shared_by=request.user).select_related('beam', 'shared_with')
+        serializer = BeamShareSerializer(shares, many=True)
+        
+        return Response({
+            'my_shared_beams': serializer.data
+        })
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while fetching your shared beams.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def unshare_beam_view(request, share_id):
+    try:
+        share = get_object_or_404(BeamShare, id=share_id)
+        
+        if share.shared_by != request.user and share.beam.user != request.user:
+            return Response({
+                'detail': 'You do not have permission to remove this share.'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        share.delete()
+        
+        return Response({
+            'detail': 'Beam share removed successfully.'
+        })
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while removing the share.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_share_permissions_view(request, share_id):
+    try:
+        share = get_object_or_404(BeamShare, id=share_id)
+        new_share_type = request.data.get('share_type')
+        
+        if not new_share_type or new_share_type not in ['read', 'write', 'admin']:
+            return Response({
+                'detail': 'Valid share type is required (read, write, admin).'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if share.shared_by != request.user and share.beam.user != request.user:
+            return Response({
+                'detail': 'You do not have permission to update this share.'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        share.share_type = new_share_type
+        share.save()
+        
+        return Response({
+            'detail': 'Share permissions updated successfully.',
+            'share': BeamShareSerializer(share).data
+        })
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while updating share permissions.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
