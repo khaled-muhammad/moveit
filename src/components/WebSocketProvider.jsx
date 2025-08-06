@@ -64,6 +64,13 @@ export const WebSocketProvider = ({ children, session }) => {
     }
   }
 
+  const saveBeam = (beamTitle) => {
+    sendJsonMessage({
+      type: 'save_beam',
+      message: beamTitle?? ''
+    })
+  }
+
   const webSocketConfig = {
     onOpen: auth,
     shouldReconnect: (closeEvent) => true,
@@ -147,7 +154,8 @@ export const WebSocketProvider = ({ children, session }) => {
     getWebSocket,
     shareClipBoard,
     auth,
-    setShouldConnect
+    setShouldConnect,
+    saveBeam
   }
 
   return (
