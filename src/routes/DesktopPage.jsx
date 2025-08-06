@@ -160,7 +160,7 @@ const KnowMoreButton = () => {
 
 const DesktopPage = () => {
   const { session, setSession } = useSession();
-  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, shareClipBoard, setShouldConnect} = useWebSocketContext();
+  const { isConnected, connectedDevices, lastJsonMessage, sharedClipboards, shareClipBoard, setShouldConnect } = useWebSocketContext();
   const queryParams = new URLSearchParams(window.location.search);
   const queryBeamId = queryParams.get('beam_id');
   const { user, isAuthenticated, logout, isLoading } = useAuth();
@@ -299,6 +299,7 @@ const DesktopPage = () => {
           <button className="brain-boom-btn" onClick={pasteClipboard}><FiCopy /> Copy</button>
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
+        
         {
           <motion.div
             className={`toolbar fixed ${isNoteEditorFullScreen? 'z-[100]' : 'z-[11]'} px-6 py-3 bg-violet-600/20 backdrop-blur-md ring-2 ring-violet-700 flex gap-10 justify-center items-center`}

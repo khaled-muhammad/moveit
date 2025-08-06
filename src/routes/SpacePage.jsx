@@ -113,8 +113,15 @@ const SpacePage = () => {
         {sharedClipboards.length > 0 && (
           <div className="md:hidden w-full flex flex-col flex-1 overflow-hidden mt-20 relative z-10">
             <div className="flex-1 overflow-y-auto flex flex-col gap-2 px-4 pb-24">
-              {sharedClipboards.map((clip) => (
-                <StaticStickyNote key={clip.id} content={clip.content} type={clip.extra} index={clip.id} />
+              {sharedClipboards.map((clip, index) => (
+                <StaticStickyNote 
+                  key={clip.id} 
+                  content={clip.content} 
+                  type={clip.extra} 
+                  index={clip.index !== undefined ? clip.index : index}
+                  isBeamNote={clip.isBeamNote}
+                  noteData={clip.noteData}
+                />
               ))}
             </div>
           </div>
