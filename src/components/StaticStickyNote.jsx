@@ -47,7 +47,7 @@ const LexicalReader = ({ editorState }) => {
   );
 };
 
-const StaticStickyNote = ({ content, type, index, onRemove }) => {
+const StaticStickyNote = ({ content, type, index, onRemove, isBeamNote, noteData }) => {
   const colors = [
     'from-purple-400 to-indigo-500',
     'from-indigo-400 to-blue-500',
@@ -56,9 +56,21 @@ const StaticStickyNote = ({ content, type, index, onRemove }) => {
     'from-teal-400 to-green-500',
   ];
 
+  const getColorIndex = () => {
+    if (typeof index === 'number') {
+      return index;
+    } else if (typeof index === 'string') {
+      const hash = index.split('').reduce((a, b) => {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+      }, 0);
+      return Math.abs(hash);
+    }
+    return 0;
+  };
 
-  const [zIndex, setZIndex] = useState(index + 1);
-  const [colorClass] = useState(colors[index % colors.length]);
+  const [zIndex, setZIndex] = useState(typeof index === 'number' ? index + 1 : Date.now());
+  const [colorClass] = useState(colors[getColorIndex() % colors.length]);
 
   const noteRef = useRef(null);
 
@@ -203,9 +215,9 @@ const StaticStickyNote = ({ content, type, index, onRemove }) => {
         )}
         {type == "video" && <video autoPlay loop className="rounded-2xl max-w-full h-auto pointer-events-none"><source src={content} type="video/mp4" />Your browser does not support the video tag.</video>}
         {type == "lexi_note" && <div>
-          <h3 className="text-lg font-semibold mb-2">{content.title}</h3>
+          <h3 className="text-lg font-semibold mb-2">{isBeamNote ? noteData?.title : content.title}</h3>
           <div className="lexical-content-reader">
-            <LexicalReader editorState={JSON.stringify(content.content)} />
+            <LexicalReader editorState={JSON.stringify(isBeamNote ? noteData?.json_content : content.content)} />
           </div>
         </div>}
       </div>
