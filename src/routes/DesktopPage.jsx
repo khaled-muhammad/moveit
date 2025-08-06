@@ -315,7 +315,13 @@ const DesktopPage = () => {
             <FiGithub />
             GitHub Repo
           </a>
-          <button className="brain-boom-btn" onClick={pasteClipboard}><FiCopy /> Copy</button>
+          <button className="brain-boom-btn" onClick={() => {
+            navigator.clipboard.writeText(session.beam_id).then(() => {
+              toast("Beam ID copied successfully")
+            }).catch((err) => {
+              toast.error("Failed to copy Beam ID!")
+            })
+          }}><FiCopy /> Copy</button>
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
         
