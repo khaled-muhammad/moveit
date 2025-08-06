@@ -134,6 +134,23 @@ class BeamConsumer(WebsocketConsumer):
                     "message": message
                 }
             )
+        elif res_type == 'share_clipboard':
+            if self.scope['user'].is_authenticated:
+                note = async_to_sync(self.save_clipboard)(message, extra, self.scope['user'])
+                if note:
+                    print(f"Saved clipboard as note: {note.id}")
+                else:
+                    print("Failed to save clipboard as note")
+            
+            async_to_sync(self.channel_layer.group_send)(
+                self.beam_group_name,
+                {
+                    "type": "share_clipboard",
+                    "message": message,
+                    "extra": extra,
+                    "is_original_sender": False
+                }
+            )
         else:
             async_to_sync(self.channel_layer.group_send)(
                 self.beam_group_name,
@@ -163,10 +180,12 @@ class BeamConsumer(WebsocketConsumer):
         }))
 
     def share_clipboard(self, event):
+        print(self.scope['user'])
         content = event.get("message")
         content_type = event.get("extra", "text")
+        is_original_sender = event.get("is_original_sender", False)
         
-        if self.scope['user'].is_authenticated:
+        if is_original_sender and self.scope['user'].is_authenticated:
             note = async_to_sync(self.save_clipboard)(content, content_type, self.scope['user'])
             if note:
                 print(f"Saved clipboard as note: {note.id}")
@@ -174,7 +193,7 @@ class BeamConsumer(WebsocketConsumer):
                 print("Failed to save clipboard as note")
         
         self.send(text_data=json.dumps({
-            "type": "share_clipboard",
+            "type": "rec_clipboard",
             "message": content,
             "extra": content_type
         }))
