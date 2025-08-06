@@ -5,7 +5,8 @@ import toast from 'react-hot-toast';
 interface User {
   id: string;
   email: string;
-  name?: string;
+  first_name?: string;
+  last_name?: string;
   username?: string;
   profile_picture?: string;
 }
@@ -15,7 +16,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshAuth: () => Promise<boolean>;
   updateUser: (userData: Partial<User>) => void;
 }
