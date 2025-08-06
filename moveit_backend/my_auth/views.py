@@ -9,6 +9,9 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from datetime import timedelta
+import base64
+from django.core.files.base import ContentFile
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from .serializers import RegisterModelSerializer
 
@@ -200,6 +203,116 @@ def delete_account_view(request):
     except Exception as e:
         return Response({
             'detail': 'An error occurred while deleting your account. Please try again.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_profile_view(request):
+    user = request.user
+    
+    try:
+        name     = request.data.get('name', '')
+        username = request.data.get('username', '')
+        email    = request.data.get('email', '')
+        
+        if not username:
+            return Response({
+                'detail': 'Username is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not email:
+            return Response({
+                'detail': 'Email is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if User.objects.filter(username=username).exclude(id=user.id).exists():
+            return Response({
+                'detail': 'Username is already taken.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if User.objects.filter(email=email).exclude(id=user.id).exists():
+            return Response({
+                'detail': 'Email is already taken.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if name != '':
+            splitted_name = name.split(" ")
+            first_name = splitted_name[0]
+            last_name  = name.removeprefix(f"{first_name} ")
+
+            user.first_name = first_name
+            user.last_name  = last_name
+
+        user.username = username
+        user.email = email
+        user.save()
+        
+        response = Response({
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'profile_picture': request.build_absolute_uri(user.profile.profile_picture.url) if user.profile.profile_picture else None,
+            },
+            'detail': 'Profile updated successfully.'
+        })
+        
+        return response
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while updating your profile. Please try again.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_profile_picture_view(request):
+    user = request.user
+    
+    try:
+        if 'profile_picture' not in request.FILES:
+            return Response({
+                'detail': 'Profile picture file is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        profile_picture_file = request.FILES['profile_picture']
+        
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+        if profile_picture_file.content_type not in allowed_types:
+            return Response({
+                'detail': 'Invalid file type. Please upload a valid image (JPEG, PNG, GIF, WebP).'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        max_size = 5 * 1024 * 1024  # 5MB
+        if profile_picture_file.size > max_size:
+            return Response({
+                'detail': 'File size too large. Please upload an image smaller than 5MB.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        file_extension = profile_picture_file.name.split('.')[-1]
+        filename = f"profile_{user.id}_{int(timedelta().total_seconds())}.{file_extension}"
+        
+        user.profile.profile_picture.save(filename, profile_picture_file, save=True)
+        
+        response = Response({
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'profile_picture': request.build_absolute_uri(user.profile.profile_picture.url),
+            },
+            'detail': 'Profile picture updated successfully.'
+        })
+        
+        return response
+        
+    except Exception as e:
+        return Response({
+            'detail': 'An error occurred while updating your profile picture. Please try again.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
