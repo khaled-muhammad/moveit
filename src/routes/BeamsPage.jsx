@@ -348,7 +348,7 @@ const BeamsPage = () => {
             <h1 className="text-3xl font-bold text-white goldman-regular">
               My Beams
             </h1>
-            <button onClick={() => navigate("/")} className="brain-boom-btn">
+            <button onClick={() => window.location.href = window.location.origin} className="brain-boom-btn">
               <FiPlus size={16} />
               New Beam
             </button>
@@ -403,7 +403,7 @@ const BeamsPage = () => {
                   </p>
                   <div className="flex justify-center">
                     <button
-                      onClick={() => navigate("/")}
+                      onClick={() => window.location.href = window.location.origin}
                       className="brain-boom-btn"
                     >
                       Create Beam
