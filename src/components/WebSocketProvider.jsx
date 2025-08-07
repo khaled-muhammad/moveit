@@ -88,7 +88,7 @@ export const WebSocketProvider = ({ children, session }) => {
     readyState,
     getWebSocket,
   } = useWebSocket(
-    session ? `ws://${window.location.host}/ws/beam/${session.beam_id}/` : null,
+    session ? `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/beam/${session.beam_id}/` : null,
     webSocketConfig,
     shouldConnect == null? false : !!session
   )
