@@ -16,6 +16,14 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<boolean>;
+  register: (userData: {
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+    password: string;
+    profile_picture?: File;
+  }) => Promise<{ success: boolean; errors?: Record<string, string[]> }>;
   logout: () => Promise<void>;
   refreshAuth: () => Promise<boolean>;
   updateUser: (userData: Partial<User>) => void;
@@ -104,6 +112,61 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return false;
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const register = async (userData: {
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+    password: string;
+    profile_picture?: File;
+  }): Promise<{ success: boolean; errors?: Record<string, string[]> }> => {
+    try {
+      setIsLoading(true);
+      
+      const formData = new FormData();
+      formData.append('first_name', userData.first_name);
+      formData.append('last_name', userData.last_name);
+      formData.append('username', userData.username);
+      formData.append('email', userData.email);
+      formData.append('password', userData.password);
+
+      if (userData.profile_picture) {
+        formData.append('profile_picture', userData.profile_picture);
+      }
+
+      const response = await api.post('/auth/register/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      });
+
+      if (response.data.user) {
+        const userData = response.data.user;
+        setUser(userData);
+        setIsAuthenticated(true);
+        toast.success('Registration successful!');
+        return { success: true };
+      } else {
+        toast.error(response.data.detail || 'Registration failed');
+        return { success: false };
+      }
+    } catch (error: any) {
+      if (error.response?.data && error.response.status === 400) {
+        return {
+          success: false, 
+          errors: error.response.data 
+        }
+      } else {
+        const errorMessage = error.response?.data?.detail || 'Registration failed'
+        toast.error(errorMessage)
+        return { success: false }
+      }
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -208,6 +271,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     isLoading,
     login,
+    register,
     logout,
     refreshAuth,
     updateUser,
