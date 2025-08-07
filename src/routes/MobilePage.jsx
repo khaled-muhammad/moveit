@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useSession } from "../components/SessionProvider";
 import { useWebSocketContext } from "../components/WebSocketProvider";
 import Logo from "../components/Logo";
-import { FiCopy, FiGrid, FiHome, FiUpload } from "react-icons/fi";
+import { FiClipboard, FiCopy, FiGrid, FiHome, FiUpload } from "react-icons/fi";
 import UploadButton from "../components/UploadBtn";
 import Footer from "../components/Footer";
 import { uploadToUguu } from "../utils";
@@ -88,7 +88,7 @@ const MobilePage = () => {
                     shareClipBoard(clipboardContent)
                   }
                 })
-              }}><FiCopy /> Copy</button>
+              }}><FiClipboard /> Paste</button>
               <UploadButton selected={(files) => {
                 files.forEach((f) => {
                   const type = f.type.split('/')[0];
