@@ -16,8 +16,8 @@ import {
 } from "react-icons/fi"
 import TakingNotesAmico from "../assets/Taking notes-amico.svg"
 import { NavLink, useNavigate } from "react-router-dom"
-import { api } from "../consts"
 import toast from "react-hot-toast"
+import { useAuth } from "../contexts/AuthContext"
 import { convertKeysToCamelCase } from "../utils"
 
 const RegisterPage = () => {
@@ -29,13 +29,13 @@ const RegisterPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [formErrors, setFormErrors] = useState({})
   const [profilePicture, setProfilePicture] = useState(null)
   const [previewImage, setPreviewImage] = useState(null)
   const [imageError, setImageError] = useState("")
   const [isImageLoading, setIsImageLoading] = useState(false)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const { register, isLoading } = useAuth()
 
   const validateImage = (file) => {
     const maxSize = 5 * 1024 * 1024 // 5MB
@@ -148,7 +148,6 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setIsLoading(true)
 
     setFormErrors({})
 
@@ -165,50 +164,23 @@ const RegisterPage = () => {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors)
-      setIsLoading(false)
       return
     }
 
-    try {
-      const formData = new FormData()
-      formData.append("first_name", firstName)
-      formData.append("last_name", lastName)
-      formData.append("username", username)
-      formData.append("email", email)
-      formData.append("password", password)
+    const result = await register({
+      first_name: firstName,
+      last_name: lastName,
+      username,
+      email,
+      password,
+      profile_picture: profilePicture
+    })
 
-      if (profilePicture) {
-        formData.append("profile_picture", profilePicture)
-      }
-
-      const response = await api.post("auth/register/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          )
-          console.log("Upload progress:", percentCompleted + "%")
-        },
-      })
-
-      localStorage.setItem('user', JSON.stringify(response.data.user))
-      toast.success("Registered Successfully!")
+    if (result.success) {
       navigate('/')
-    } catch (err) {
-      if (err.response?.data) {
-        setFormErrors(convertKeysToCamelCase(err.response.data))
-        console.log(
-          "Registration errors:",
-          convertKeysToCamelCase(err.response.data)
-        )
-      } else {
-        console.error("Registration failed:", err)
-        toast("Registration failed. Please try again.")
-      }
-    } finally {
-      setIsLoading(false)
+    } else if (result.errors) {
+      const convertedErrors = convertKeysToCamelCase(result.errors)
+      setFormErrors(convertedErrors)
     }
   }
 
