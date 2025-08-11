@@ -55,7 +55,7 @@ class NoteViewSet(viewsets.ModelViewSet):
                 models.Q(content__icontains=search)
             )
         
-        serializer = NoteListSerializer(queryset, many=True)
+        serializer = NoteListSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
@@ -78,7 +78,7 @@ class NoteViewSet(viewsets.ModelViewSet):
             elif archived.lower() == 'true':
                 queryset = queryset.filter(archived_at__isnull=False)
             
-            serializer = NoteListSerializer(queryset, many=True)
+            serializer = NoteListSerializer(queryset, many=True, context={'request': request})
             return Response(serializer.data)
             
         except Exception as e:

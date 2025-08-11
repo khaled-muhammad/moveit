@@ -135,10 +135,26 @@ class BeamConsumer(WebsocketConsumer):
                 }
             )
         elif res_type == 'share_clipboard':
+            user_info = None
             if self.scope['user'].is_authenticated:
                 note = async_to_sync(self.save_clipboard)(message, extra, self.scope['user'])
                 if note:
                     print(f"Saved clipboard as note: {note.id}")
+                    # Include user information for authenticated users
+                    user_info = {
+                        "id": self.scope['user'].id,
+                        "username": self.scope['user'].username,
+                        "first_name": self.scope['user'].first_name,
+                        "last_name": self.scope['user'].last_name,
+                        "email": self.scope['user'].email
+                    }
+                    
+                    # Add profile picture if available
+                    try:
+                        if hasattr(self.scope['user'], 'profile') and self.scope['user'].profile.profile_picture:
+                            user_info["profile_picture"] = self.scope['user'].profile.profile_picture.url
+                    except:
+                        pass
                 else:
                     print("Failed to save clipboard as note")
             
@@ -148,7 +164,8 @@ class BeamConsumer(WebsocketConsumer):
                     "type": "share_clipboard",
                     "message": message,
                     "extra": extra,
-                    "is_original_sender": False
+                    "is_original_sender": False,
+                    "user_info": user_info
                 }
             )
         else:
@@ -184,6 +201,7 @@ class BeamConsumer(WebsocketConsumer):
         content = event.get("message")
         content_type = event.get("extra", "text")
         is_original_sender = event.get("is_original_sender", False)
+        user_info = event.get("user_info", None)
         
         if is_original_sender and self.scope['user'].is_authenticated:
             note = async_to_sync(self.save_clipboard)(content, content_type, self.scope['user'])
@@ -192,11 +210,17 @@ class BeamConsumer(WebsocketConsumer):
             else:
                 print("Failed to save clipboard as note")
         
-        self.send(text_data=json.dumps({
+        response_data = {
             "type": "rec_clipboard",
             "message": content,
             "extra": content_type
-        }))
+        }
+        
+        # Include user information if available (note is by authenticated user)
+        if user_info:
+            response_data["user"] = user_info
+        
+        self.send(text_data=json.dumps(response_data))
 
     def auth_users(self, event):
         self.send(text_data=json.dumps({

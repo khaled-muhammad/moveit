@@ -1,11 +1,25 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Beam, BeamShare
+from my_auth.models import Profile
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile_picture']
+    
+    def get_profile_picture(self, obj):
+        try:
+            if hasattr(obj, 'profile') and obj.profile.profile_picture:
+                request = self.context.get('request')
+                if request:
+                    return request.build_absolute_uri(obj.profile.profile_picture.url)
+                return obj.profile.profile_picture.url
+            return None
+        except:
+            return None
 
 class BeamSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

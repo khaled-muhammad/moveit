@@ -32,7 +32,7 @@ class GenerateBeamView(APIView):
 
         beam     = Beam.objects.create(beam_id=beam_id, beam_key=beam_key)
 
-        serializer = BeamSerializer(beam)
+        serializer = BeamSerializer(beam, context={'request': request})
 
         return Response(serializer.data)
 
@@ -139,7 +139,7 @@ class ZeroXZeroUploadView(APIView):
 def get_user_beams_view(request):
     try:
         beams = Beam.objects.filter(user=request.user).order_by('-created_at')
-        serializer = BeamSerializer(beams, many=True)
+        serializer = BeamSerializer(beams, many=True, context={'request': request})
         
         return Response({
             'beams': serializer.data
@@ -194,7 +194,7 @@ def share_beam_view(request):
             share = serializer.save(shared_by=request.user)
             return Response({
                 'detail': f'Beam shared successfully with {username}.',
-                'share': BeamShareSerializer(share).data
+                'share': BeamShareSerializer(share, context={'request': request}).data
             }, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -209,7 +209,7 @@ def share_beam_view(request):
 def get_shared_beams_view(request):
     try:
         shares = BeamShare.objects.filter(shared_with=request.user).select_related('beam', 'shared_by')
-        serializer = BeamShareSerializer(shares, many=True)
+        serializer = BeamShareSerializer(shares, many=True, context={'request': request})
         
         return Response({
             'shared_beams': serializer.data
@@ -225,7 +225,7 @@ def get_shared_beams_view(request):
 def get_my_shared_beams_view(request):
     try:
         shares = BeamShare.objects.filter(shared_by=request.user).select_related('beam', 'shared_with')
-        serializer = BeamShareSerializer(shares, many=True)
+        serializer = BeamShareSerializer(shares, many=True, context={'request': request})
         
         return Response({
             'my_shared_beams': serializer.data
@@ -280,7 +280,7 @@ def update_share_permissions_view(request, share_id):
         
         return Response({
             'detail': 'Share permissions updated successfully.',
-            'share': BeamShareSerializer(share).data
+            'share': BeamShareSerializer(share, context={'request': request}).data
         })
         
     except Exception as e:

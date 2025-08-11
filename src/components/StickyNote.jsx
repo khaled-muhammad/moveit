@@ -46,7 +46,7 @@ const LexicalReader = ({ editorState }) => {
   );
 };
 
-const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onMove, cameraPosition, worldX, worldY, isBeamNote, noteData }) => {
+const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onMove, cameraPosition, worldX, worldY, isBeamNote, noteData, user }) => {
   const colors = [
     'from-purple-400 to-indigo-500',
     'from-indigo-400 to-blue-500',
@@ -188,6 +188,39 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         <FiX />
       </button>
       <div className="text-white break-words whitespace-pre-wrap select-text">
+        {/* User information display */}
+        {user && (
+          <div className="mb-2 pb-2 border-b border-white border-opacity-20">
+            <div className="flex items-center gap-2 text-sm">
+              {user.profile_picture ? (
+                <img 
+                  src={user.profile_picture} 
+                  alt={`${user.first_name || user.username}'s profile`}
+                  className="w-6 h-6 rounded-full object-cover"
+                  onError={(e) => {
+                    // Fallback to initial if image fails to load
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div className={`w-6 h-6 bg-white bg-opacity-30 rounded-full flex items-center justify-center text-xs font-semibold ${user.profile_picture ? 'hidden' : ''}`}>
+                {user.first_name ? user.first_name.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div className="font-medium">
+                  {user.first_name && user.last_name 
+                    ? `${user.first_name} ${user.last_name}` 
+                    : user.username}
+                </div>
+                {user.first_name && user.last_name && (
+                  <div className="text-xs opacity-80">@{user.username}</div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        
         {type == "text" && <div className="pointer-events-none">{content}</div>}
         {type == "image" && <img src={content} className="rounded-2xl pointer-events-none" />}
         {type == "audio" && (

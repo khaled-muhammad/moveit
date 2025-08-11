@@ -287,6 +287,7 @@ const StickyNoteContainer = () => {
             worldY={note.worldY}
             isBeamNote={note.isBeamNote}
             noteData={note.noteData}
+            user={note.user}
             onMove={(newWorldX, newWorldY) => {
               setSharedClipboards(prev => 
                 prev.map(n => 

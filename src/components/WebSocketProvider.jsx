@@ -49,6 +49,7 @@ export const WebSocketProvider = ({ children, session }) => {
           worldY: Math.random() * (window.innerHeight - 200),
           isBeamNote: true,
           noteData: note,
+          user: note.user, // Include user information from the API response
           index: index
         }));
         
@@ -103,7 +104,18 @@ export const WebSocketProvider = ({ children, session }) => {
       } else if (lastJsonMessage.type == 'authed_users') {
         setConnectedDevices(lastJsonMessage.users)
       } else if (lastJsonMessage.type == 'rec_clipboard') {
-        setSharedClipboards([...sharedClipboards, {id: Date.now(), content: lastJsonMessage.message, extra: lastJsonMessage.extra}])
+        const newClipboard = {
+          id: Date.now(), 
+          content: lastJsonMessage.message, 
+          extra: lastJsonMessage.extra
+        };
+        
+        // Include user information if available
+        if (lastJsonMessage.user) {
+          newClipboard.user = lastJsonMessage.user;
+        }
+        
+        setSharedClipboards([...sharedClipboards, newClipboard])
         if (lastJsonMessage.extra && lastJsonMessage.extra !== 'text') {
           if (session?.beam_id) {
             //loadBeamNotes(session.beam_id, 'share_clipboard') XXX
