@@ -1,5 +1,6 @@
-import { FiGithub, FiHeart, FiCoffee } from "react-icons/fi";
+import { FiGithub, FiHeart, FiCoffee, FiFileText, FiShield, FiDollarSign } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 import logo from "../assets/logo.png"
 
@@ -24,11 +25,11 @@ const Footer = () => {
             <div className="flex items-center gap-2 mb-2">
               <img src={logo} width={50} alt="logo" />
               <span className="text-2xl font-bold goldman-regular text-transparent bg-clip-text bg-gradient-to-r from-[#7F5AF0] to-[#9B6DFF]">
-                MoveIt
+                Airsynca
               </span>
             </div>
             <p className="text-gray-400 text-sm max-w-xs">
-              Instant content sharing between devices. No accounts, no hassle.
+              Instant content sharing between devices with persistent sessions and collaborative workspaces.
             </p>
           </motion.div>
 
@@ -40,43 +41,54 @@ const Footer = () => {
           >
             <div className="flex items-center gap-6">
               <motion.a
-                href="https://github.com/khaled-muhammad/moveit"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-gray-400 hover:text-[#7F5AF0] transition-colors duration-300 group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <FiGithub className="text-lg group-hover:rotate-12 transition-transform duration-300" />
-                <span className="text-sm font-medium">GitHub</span>
-              </motion.a>
-              
-              <motion.a
-                href="#"
+                href="mailto:support@airsynca.com"
                 className="flex items-center gap-2 text-gray-400 hover:text-[#7F5AF0] transition-colors duration-300 group"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <FiCoffee className="text-lg group-hover:rotate-12 transition-transform duration-300" />
-                <span className="text-sm font-medium">Support</span>
+                <span className="text-sm font-medium">Customer Support</span>
+              </motion.a>
+              
+              <motion.a
+                href="/pricing"
+                className="flex items-center gap-2 text-gray-400 hover:text-[#7F5AF0] transition-colors duration-300 group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FiDollarSign className="text-lg group-hover:rotate-12 transition-transform duration-300" />
+                <span className="text-sm font-medium">Pricing</span>
               </motion.a>
             </div>
             
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <span>Made with</span>
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{ 
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <FiHeart className="text-[#7F5AF0] text-xs" />
+            <div className="flex items-center gap-4 text-xs">
+              <motion.div className="flex items-center gap-4">
+                <Link 
+                  to="/terms"
+                  className="text-gray-500 hover:text-[#7F5AF0] transition-colors duration-300 flex items-center gap-1"
+                >
+                  <FiFileText className="text-xs" />
+                  Terms
+                </Link>
+                <Link 
+                  to="/privacy"
+                  className="text-gray-500 hover:text-[#7F5AF0] transition-colors duration-300 flex items-center gap-1"
+                >
+                  <FiShield className="text-xs" />
+                  Privacy
+                </Link>
+                <Link 
+                  to="/refund"
+                  className="text-gray-500 hover:text-[#7F5AF0] transition-colors duration-300 flex items-center gap-1"
+                >
+                  <FiDollarSign className="text-xs" />
+                  Refund
+                </Link>
               </motion.div>
-              <span>by Khaled Muhammad</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <span>Trusted by thousands of users worldwide</span>
             </div>
           </motion.div>
 
@@ -87,7 +99,7 @@ const Footer = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
           >
             <p className="text-gray-500 text-sm">
-              © {currentYear} MoveIt. All rights reserved.
+              © {currentYear} Airsynca. All rights reserved.
             </p>
             <p className="text-gray-600 text-xs mt-1">
               Open source & free forever
@@ -105,14 +117,14 @@ const Footer = () => {
             <div className="flex items-center gap-4">
               <span>Privacy First</span>
               <span>•</span>
-              <span>No Data Collection</span>
+              <span>Instant Sharing</span>
               <span>•</span>
-              <span>End-to-End Secure</span>
+              <span>24/7 Support</span>
             </div>
             <div className="flex items-center gap-2">
-              <span>Version 1.0.0</span>
+              <span>30-Day Money Back Guarantee</span>
               <span>•</span>
-              <span>Built with React & Django</span>
+              <span>Secure & Reliable</span>
             </div>
           </div>
         </motion.div>

@@ -12,6 +12,10 @@ import LoginPage from "./routes/LoginPage.jsx";
 import RegisterPage from "./routes/RegisterPage.jsx";
 import ProfilePage from "./routes/ProfilePage.jsx";
 import BeamsPage from "./routes/BeamsPage.jsx";
+import PricingPage from "./routes/PricingPage.jsx";
+import TermsOfService from "./routes/TermsOfService.jsx";
+import PrivacyPolicy from "./routes/PrivacyPolicy.jsx";
+import RefundPolicy from "./routes/RefundPolicy.jsx";
 import { AuthProvider } from './contexts/AuthContext.js';
 
 createRoot(document.getElementById("root")).render(
@@ -23,6 +27,10 @@ createRoot(document.getElementById("root")).render(
           <Route path="" element={<Layout />}>
             <Route index element={<App />} />
             <Route path="space" element={<SpacePage />} />
+            <Route path="pricing" element={<PricingPage />} />
+            <Route path="terms" element={<TermsOfService />} />
+            <Route path="privacy" element={<PrivacyPolicy />} />
+            <Route path="refund" element={<RefundPolicy />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="profile" element={<ProfilePage />} />

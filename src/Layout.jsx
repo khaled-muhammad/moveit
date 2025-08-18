@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
-import { FiGrid, FiHome, FiUser, FiShare2 } from "react-icons/fi";
+import { FiGrid, FiHome, FiUser, FiShare2, FiDollarSign } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { useSession } from "./components/SessionProvider";
 import { WebSocketProvider } from "./components/WebSocketProvider";
@@ -48,6 +48,20 @@ const Layout = () => {
                     }
                   >
                     Home
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink 
+                    to='/pricing' 
+                    className={({ isActive }) =>
+                      `goldman-regular text-sm font-medium transition-all duration-300 hover:text-purple-400 ${
+                        isActive 
+                          ? 'text-purple-400 relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-purple-400 after:to-indigo-500' 
+                          : 'text-gray-300'
+                      }`
+                    }
+                  >
+                    Pricing
                   </NavLink>
                 </li>
                 {isAuthenticated && (
@@ -184,6 +198,21 @@ const Layout = () => {
                   >
                     <FiGrid size={24} />
                     <span className="text-xs goldman-regular">Space</span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/pricing"
+                    className={({ isActive }) =>
+                      `flex flex-col items-center gap-1 transition-all duration-300 ${
+                        isActive 
+                          ? "text-purple-400" 
+                          : "text-gray-300 hover:text-purple-400"
+                      }`
+                    }
+                  >
+                    <FiDollarSign size={24} />
+                    <span className="text-xs goldman-regular">Pricing</span>
                   </NavLink>
                 </li>
                 {isAuthenticated && (
