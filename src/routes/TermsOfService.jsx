@@ -44,7 +44,7 @@ const TermsOfService = () => {
                 1. Acceptance of Terms
               </h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                By accessing and using Moveit ("the Service"), operated by Muhammad Ibrahim Ibrahim Abulmaaty ("we," "us," or "our") with principal address at St.268, Alexandria, Egypt, you accept and agree to be bound by the terms and provision of this agreement.
+                By accessing and using Airsynca ("the Service"), operated by Muhammad Ibrahim Ibrahim Abulmaaty ("we," "us," or "our") with principal address at St.268, Alexandria, Egypt, you accept and agree to be bound by the terms and provision of this agreement.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 If you do not agree to abide by the above, please do not use this service.
@@ -57,7 +57,7 @@ const TermsOfService = () => {
                 2. Description of Service
               </h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Moveit is a content sharing and collaboration platform that allows users to:
+                Airsynca is a content sharing and collaboration platform that allows users to:
               </p>
               <ul className="text-gray-300 leading-relaxed list-disc list-inside space-y-2 mb-4">
                 <li>Share text, links, images, audio, and video content between devices</li>
@@ -75,7 +75,7 @@ const TermsOfService = () => {
                 3. User Accounts and Registration
               </h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                While some features of Moveit are available without registration, certain premium features require account creation. When you create an account, you must provide accurate and complete information.
+                While some features of Airsynca are available without registration, certain premium features require account creation. When you create an account, you must provide accurate and complete information.
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 You are responsible for:
@@ -107,7 +107,7 @@ const TermsOfService = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">5. Content and Intellectual Property</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                You retain ownership of all content you upload, create, or share through Moveit. By using our Service, you grant us a limited license to store, process, and transmit your content solely for the purpose of providing the Service.
+                You retain ownership of all content you upload, create, or share through Airsynca. By using our Service, you grant us a limited license to store, process, and transmit your content solely for the purpose of providing the Service.
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 You are solely responsible for the content you share and must ensure you have the right to share such content.
@@ -150,7 +150,7 @@ const TermsOfService = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">9. Limitation of Liability</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                To the maximum extent permitted by law, Moveit (Muhammad Ibrahim Ibrahim Abulmaaty) shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use.
+                To the maximum extent permitted by law, Airsynca (Muhammad Ibrahim Ibrahim Abulmaaty) shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 Our total liability shall not exceed the amount paid by you for the Service in the 12 months preceding the claim.
@@ -160,7 +160,7 @@ const TermsOfService = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">10. Indemnification</h2>
               <p className="text-gray-300 leading-relaxed">
-                You agree to indemnify and hold harmless Moveit and Muhammad Ibrahim Ibrahim Abulmaaty, along with any officers, directors, employees, and agents, from any claims, damages, or expenses arising from your use of the Service or violation of these Terms.
+                You agree to indemnify and hold harmless Airsynca and Muhammad Ibrahim Ibrahim Abulmaaty, along with any officers, directors, employees, and agents, from any claims, damages, or expenses arising from your use of the Service or violation of these Terms.
               </p>
             </section>
 
@@ -199,7 +199,7 @@ const TermsOfService = () => {
               <div className="bg-gray-800/50 rounded-lg p-4">
                 <p className="text-gray-300">
                   <strong>Legal name:</strong> Muhammad Ibrahim Ibrahim Abulmaaty<br />
-                  <strong>Operating as:</strong> Moveit<br />
+                  <strong>Operating as:</strong> Airsynca<br />
                   <strong>Email:</strong> legal@airsynca.com<br />
                   <strong>Website:</strong> airsynca.com<br />
                   <strong>Address:</strong> St.268, Alexandria, Egypt

@@ -44,7 +44,7 @@ const PrivacyPolicy = () => {
                 1. Introduction
               </h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Moveit ("we," "us," or "our"), operated by Muhammad Ibrahim Ibrahim Abulmaaty, is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our content sharing and collaboration platform.
+                Airsynca ("we," "us," or "our"), operated by Muhammad Ibrahim Ibrahim Abulmaaty, is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our content sharing and collaboration platform.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 By using our Service, you consent to the data practices described in this policy.
@@ -241,7 +241,7 @@ const PrivacyPolicy = () => {
               <div className="bg-gray-800/50 rounded-lg p-4">
                 <p className="text-gray-300">
                   <strong>Legal name:</strong> Muhammad Ibrahim Ibrahim Abulmaaty<br />
-                  <strong>Operating as:</strong> Moveit<br />
+                  <strong>Operating as:</strong> Airsynca<br />
                   <strong>Email:</strong> privacy@airsynca.com<br />
                   <strong>Website:</strong> airsynca.com<br />
                   <strong>Address:</strong> St.268, Alexandria, Egypt<br />

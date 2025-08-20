@@ -26,7 +26,7 @@ const PricingPage = () => {
       name: 'Free',
       icon: <FiStar className="w-6 h-6" />,
       price: { monthly: 0, yearly: 0 },
-      description: 'Perfect for personal use and trying out MoveIt',
+      description: 'Perfect for personal use and trying out Airsynca',
       color: 'from-gray-400 to-gray-600',
       bgColor: 'bg-gray-600/10',
       borderColor: 'border-gray-600/20',

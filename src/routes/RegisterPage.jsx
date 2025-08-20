@@ -339,7 +339,7 @@ const RegisterPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              Join MoveIt
+              Join Airsynca
             </motion.h1>
             <motion.p
               className="text-gray-400 text-lg"

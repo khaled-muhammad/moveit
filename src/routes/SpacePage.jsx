@@ -38,8 +38,8 @@ const SpacePage = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Moveit Beam",
-          text: `Join my Beam on Moveit!`,
+          title: "Airsynca Beam",
+          text: `Join my Beam on Airsynca!`,
           url: `${window.location.origin}?beam_id=${session.beam_id}`,
         });
         console.log("Shared successfully");

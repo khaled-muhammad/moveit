@@ -39,7 +39,7 @@ const KnowMoreButton = () => {
     },
     {
       title: "Open Source",
-      description: "MoveIt is completely open source and free to use.",
+      description: "Airsynca is completely open source and free to use.",
       color: "from-teal-400 to-green-500"
     }
   ];
@@ -88,7 +88,7 @@ const KnowMoreButton = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 300 }}
               >
-                About MoveIt
+                About Airsynca
               </motion.h2>
               
               <motion.p 
@@ -97,7 +97,7 @@ const KnowMoreButton = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                MoveIt is a modern web application that allows you to easily share content between your devices.
+                Airsynca is a modern web application that allows you to easily share content between your devices.
                 <br />
                 <span className="text-purple-400">No downloads, no accounts, no hassle.</span> Just scan and share!
               </motion.p>
@@ -247,8 +247,8 @@ const DesktopPage = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Moveit Beam",
-          text: `Join my Beam on Moveit!`,
+          title: "Airsynca Beam",
+          text: `Join my Beam on Airsynca!`,
           url: `${window.location.origin}?beam_id=${session.beam_id}`,
         });
         console.log("Shared successfully");
