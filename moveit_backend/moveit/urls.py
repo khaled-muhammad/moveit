@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/beams/', include('beam.urls')),
     path('api/upload/', ZeroXZeroUploadView.as_view(), name='zeroxzero-upload'),
     path('api/', include('note.urls')),
+    path('api/', include('plans.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

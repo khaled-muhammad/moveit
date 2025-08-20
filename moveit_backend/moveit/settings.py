@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'my_auth.apps.MyAuthConfig',
     'beam',
     'note', 
+    'plans',
 ]
 
 MIDDLEWARE = [

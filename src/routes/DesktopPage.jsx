@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiClipboard, FiCopy, FiGithub, FiInfo, FiPlus, FiShare2, FiX, FiSend, FiMaximize, FiMaximize2 } from "react-icons/fi";
+import { FiClipboard, FiCopy, FiGithub, FiInfo, FiPlus, FiShare2, FiX, FiSend, FiMaximize, FiMaximize2, FiUpload } from "react-icons/fi";
 import { useSession } from "../components/SessionProvider";
 import { useWebSocketContext } from "../components/WebSocketProvider";
 import QRCodeDisplay from "../components/QRCodeDisplay";
@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CloseButton } from "../components/closeBtn";
 import NoteForm from "../components/NoteForm";
 import { useAuth } from "../contexts/AuthContext";
+import { uploadToUguu } from "../utils";
 
 const KnowMoreButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -170,6 +171,8 @@ const DesktopPage = () => {
   const [messageInput, setMessageInput] = useState('');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [beamName, setBeamName] = useState('');
+  const [fileInputRef, setFileInputRef] = useState(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   useEffect(() => {
     if (queryBeamId != null && (!session || session.beam_id !== queryBeamId)) {
@@ -272,11 +275,96 @@ const DesktopPage = () => {
     setShowSaveModal(true);
   }
 
+  const handleFileUpload = (files) => {
+    files.forEach((file) => {
+      const type = file.type.split('/')[0];
+      
+      toast(`Uploading ${file.name}`);
+      uploadToUguu(file).then((directLink) => {
+        if (!directLink) {
+          toast.error("Failed to upload!");
+          return;
+        }
+        toast.success(`Uploaded "${file.name}" successfully!`);
+        shareClipBoard(directLink, type);
+      }).catch((error) => {
+        console.error('Upload error:', error);
+        toast.error(`Failed to upload ${file.name}`);
+      });
+    });
+  }
+
+  const triggerFileUpload = () => {
+    if (fileInputRef) {
+      fileInputRef.click();
+    }
+  }
+
+  const handleFileInputChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      handleFileUpload(files);
+    }
+    e.target.value = null; // Reset input
+  }
+
+  // Drag and drop handlers
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragOver(true);
+    }
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only hide drag overlay if leaving the main container
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setIsDragOver(false);
+    }
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      // Filter for supported file types
+      const supportedFiles = files.filter(file => 
+        file.type.startsWith('image/') || 
+        file.type.startsWith('video/') || 
+        file.type.startsWith('audio/')
+      );
+      
+      if (supportedFiles.length > 0) {
+        handleFileUpload(supportedFiles);
+        if (supportedFiles.length < files.length) {
+          toast.error(`${files.length - supportedFiles.length} unsupported file(s) were ignored`);
+        }
+      } else {
+        toast.error('No supported files found. Please upload images, videos, or audio files.');
+      }
+    }
+  }
+
   return (
     <>
       <section
         id="main"
-        className="flex justify-center items-center gap-5 flex-col min-h-[100vh]"
+        className="flex justify-center items-center gap-5 flex-col min-h-[100vh] relative"
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
       >
         <div className={`fixed bottom-0 left-0 mb-8 ml-8 bg-white rounded-md z-[11]`}>
           {connectedDevices.length > 1 && session && (
@@ -384,7 +472,7 @@ const DesktopPage = () => {
             }
             {isNoteEditorFullScreen? '' : !isToolbarExpanded ? (
               <motion.div
-                className="flex gap-10 justify-center items-center w-full"
+                className="flex gap-6 justify-center items-center w-full"
                 initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -395,14 +483,25 @@ const DesktopPage = () => {
                   onClick={pasteClipboard}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
+                  title="Paste clipboard"
                 >
                   <FiClipboard size={22} />
+                </motion.button>
+                <motion.button
+                  className="toolbar-btn"
+                  onClick={triggerFileUpload}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  title="Upload files"
+                >
+                  <FiUpload size={22} />
                 </motion.button>
                 <motion.button
                   className="toolbar-btn"
                   onClick={() => setIsToolbarExpanded(true)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
+                  title="Add message"
                 >
                   <FiPlus size={22} />
                 </motion.button>
@@ -411,6 +510,7 @@ const DesktopPage = () => {
                   onClick={handleShareBeam}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
+                  title="Share beam"
                 >
                   <FiShare2 size={22} />
                 </motion.button>
@@ -489,6 +589,60 @@ const DesktopPage = () => {
         }
         {sharedClipboards.length > 0 && <p className="fixed bottom-0 mb-10 font-medium opacity-60">Double Click a note to copy</p>}
       </section>
+
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={(ref) => setFileInputRef(ref)}
+        onChange={handleFileInputChange}
+        accept="video/*,image/*,audio/*"
+        multiple
+        style={{ display: 'none' }}
+      />
+
+      {/* Drag and Drop Overlay */}
+      <AnimatePresence>
+        {isDragOver && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              className="bg-violet-600/20 backdrop-blur-xl border-2 border-dashed border-violet-500 rounded-3xl p-16 text-center max-w-md mx-4"
+              initial={{ scale: 0.8, y: 50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 50 }}
+              transition={{ type: "spring", damping: 20 }}
+            >
+              <motion.div
+                className="mb-6"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <FiUpload size={64} className="text-violet-400 mx-auto" />
+              </motion.div>
+              <h2 className="text-2xl font-bold text-white mb-4">Drop Files Here</h2>
+              <p className="text-gray-300 leading-relaxed">
+                Drop your images, videos, or audio files to upload them instantly
+              </p>
+              <div className="mt-4 flex justify-center gap-2">
+                <span className="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded">Images</span>
+                <span className="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded">Videos</span>
+                <span className="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded">Audio</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Save Beam Modal */}
       <AnimatePresence>
