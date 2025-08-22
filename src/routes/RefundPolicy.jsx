@@ -44,7 +44,7 @@ const RefundPolicy = () => {
                 1. Overview
               </h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                At Airsynca, we want you to be completely satisfied with your subscription. This Refund Policy outlines the circumstances under which refunds may be granted for our premium services.
+                At Airsynca, operated by Muhammad Ibrahim Ibrahim Abulmaaty as an individual service provider, we want you to be completely satisfied with your subscription. This Refund Policy outlines the circumstances under which refunds may be granted for our premium services.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 By purchasing a subscription to Airsynca, you acknowledge that you have read and agree to this Refund Policy.
@@ -211,7 +211,7 @@ const RefundPolicy = () => {
               <ul className="text-gray-300 leading-relaxed list-disc list-inside space-y-2 mb-4">
                 <li>No credit card required to start the trial</li>
                 <li>Full access to premium features during trial</li>
-                <li>Automatic conversion to paid plan after trial ends</li>
+                <li>Manual conversion to paid plan after trial ends (with your consent)</li>
                 <li>Can cancel anytime during the trial period</li>
                 <li>30-day money-back guarantee applies after trial conversion</li>
               </ul>
@@ -220,10 +220,10 @@ const RefundPolicy = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">11. Enterprise Customers</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Enterprise customers with custom contracts may have different refund terms specified in their service agreements.
+                Enterprise customers with custom agreements may have different refund terms specified in their service agreements.
               </p>
               <p className="text-gray-300 leading-relaxed">
-                Please refer to your specific contract or contact your account manager for enterprise refund policies.
+                Please refer to your specific agreement or contact us directly for enterprise refund policies.
               </p>
             </section>
 
@@ -234,6 +234,8 @@ const RefundPolicy = () => {
               </p>
               <div className="bg-gray-800/50 rounded-lg p-4">
                 <p className="text-gray-300">
+                  <strong>Service Provider:</strong> Muhammad Ibrahim Ibrahim Abulmaaty<br />
+                  <strong>Operating as:</strong> Airsynca<br />
                   <strong>Email:</strong> support@airsynca.com<br />
                   <strong>Website:</strong> airsynca.com<br />
                   <strong>Response Time:</strong> Within 24 hours<br />

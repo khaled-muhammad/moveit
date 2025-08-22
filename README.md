@@ -1,8 +1,8 @@
-# 🚀 MoveIt
+# 🚀 Airsynca
 
 **Instant content sharing between devices with persistent sessions and collaborative workspaces.**
 
-MoveIt is a modern web application that allows you to easily share content between your devices using QR codes and WebSocket connections. Create persistent beam sessions, share text, links, images, audio, and videos instantly, and collaborate in real-time workspaces.
+Airsynca is a modern web application that allows you to easily share content between your devices using QR codes and WebSocket connections. Create persistent beam sessions, share text, links, images, audio, and videos instantly, and collaborate in real-time workspaces.
 
 ![MoveIt Demo](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -87,8 +87,8 @@ MoveIt is a modern web application that allows you to easily share content betwe
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/khaled-muhammad/moveit.git
-   cd moveit
+   git clone https://github.com/khaled-muhammad/airsynca.git
+   cd airsynca
    ```
 
 2. **Install Frontend Dependencies**
@@ -128,7 +128,7 @@ MoveIt is a modern web application that allows you to easily share content betwe
 
    **Terminal 1 - Backend:**
    ```bash
-   cd moveit_backend
+   cd airsynca_backend
    python manage.py runserver
    ```
 
@@ -144,14 +144,14 @@ MoveIt is a modern web application that allows you to easily share content betwe
 ## 📱 How to Use
 
 ### Desktop Experience
-1. **Open MoveIt** in your desktop browser
+1. **Open Airsynca** in your desktop browser
 2. **Create a Beam Session** - A new beam session is automatically created
 3. **Share the QR Code** - Display the QR code for mobile devices to scan
 4. **Start Sharing Content** - Use the toolbar to share clipboard content or create notes
 5. **Manage Your Session** - Save beam sessions for later use
 
 ### Mobile Experience
-1. **Open MoveIt** in your mobile browser
+1. **Open Airsynca** in your mobile browser
 2. **Scan the QR Code** displayed on your desktop
 3. **Join the Beam Session** - Connect to the shared workspace
 4. **Share Content** - Use the "Copy" button to share clipboard content
@@ -199,7 +199,7 @@ moveit/
 │   ├── assets/                   # Static assets
 │   ├── App.jsx                   # Main application component
 │   └── main.jsx                  # Application entry point
-├── moveit_backend/               # Django backend application
+├── airsynca_backend/               # Django backend application
 │   ├── beam/                     # Beam session management
 │   │   ├── consumers.py         # WebSocket consumers
 │   │   ├── models.py            # Beam and session models
@@ -215,7 +215,7 @@ moveit/
 │   │   ├── models.py            # User models
 │   │   ├── views.py             # Auth API views
 │   │   └── authentication.py    # Custom authentication
-│   ├── moveit/                   # Django project settings
+│   ├── airsynca/                   # Django project settings
 │   │   ├── settings.py          # Django configuration
 │   │   ├── urls.py              # URL routing
 │   │   └── asgi.py              # ASGI configuration
@@ -329,6 +329,6 @@ If you have any questions or need help, please:
 
 ---
 
-**Made with ❤️ by [Khaled Muhammad](https://github.com/khaled-muhammad)**
+**Made with ❤️ by [Muhammad Ibrahim Ibrahim Abulmaaty](https://github.com/khaled-muhammad)**
 
-*MoveIt - Instant content sharing between devices with persistent sessions*
+*Airsynca - Instant content sharing between devices with persistent sessions*

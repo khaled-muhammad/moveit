@@ -44,7 +44,7 @@ const TermsOfService = () => {
                 1. Acceptance of Terms
               </h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                By accessing and using Airsynca ("the Service"), operated by Muhammad Ibrahim Ibrahim Abulmaaty ("we," "us," or "our") with principal address at St.268, Alexandria, Egypt, you accept and agree to be bound by the terms and provision of this agreement.
+                By accessing and using Airsynca ("the Service"), operated by Muhammad Ibrahim Ibrahim Abulmaaty as an individual service provider with principal address at St.268, Alexandria, Egypt, you accept and agree to be bound by the terms and provision of this agreement.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 If you do not agree to abide by the above, please do not use this service.
@@ -65,7 +65,7 @@ const TermsOfService = () => {
                 <li>Collaborate in real-time with multiple devices</li>
                 <li>Use QR codes for device pairing</li>
                 <li>Create rich notes and organize content</li>
-                <li>Upload and share files</li>
+                <li>Temporarily upload and share files (with size and time limitations)</li>
               </ul>
             </section>
 
@@ -101,16 +101,19 @@ const TermsOfService = () => {
                 <li>Use the Service for spam, phishing, or other malicious activities</li>
                 <li>Interfere with or disrupt the Service or servers</li>
                 <li>Attempt to reverse engineer or decompile the Service</li>
+                <li>Share copyrighted material without proper authorization</li>
+                <li>Upload files larger than the specified limits for your plan</li>
+                <li>Use the Service for commercial file hosting or distribution</li>
               </ul>
             </section>
 
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">5. Content and Intellectual Property</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                You retain ownership of all content you upload, create, or share through Airsynca. By using our Service, you grant us a limited license to store, process, and transmit your content solely for the purpose of providing the Service.
+                You retain ownership of all content you upload, create, or share through Airsynca. By using our Service, you grant us a limited license to temporarily store, process, and transmit your content solely for the purpose of providing the Service.
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
-                You are solely responsible for the content you share and must ensure you have the right to share such content.
+                You are solely responsible for the content you share and must ensure you have the right to share such content. We reserve the right to remove any content that violates these terms or applicable laws.
               </p>
             </section>
 
@@ -127,7 +130,7 @@ const TermsOfService = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">7. Subscription and Billing</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Premium features require a paid subscription. Subscription fees are billed in advance on a monthly or yearly basis.
+                Premium features require a paid subscription. Subscription fees are billed in advance on a monthly or yearly basis with your explicit consent.
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 You may cancel your subscription at any time through your account settings. Cancellations take effect at the end of the current billing period.
@@ -160,7 +163,7 @@ const TermsOfService = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">10. Indemnification</h2>
               <p className="text-gray-300 leading-relaxed">
-                You agree to indemnify and hold harmless Airsynca and Muhammad Ibrahim Ibrahim Abulmaaty, along with any officers, directors, employees, and agents, from any claims, damages, or expenses arising from your use of the Service or violation of these Terms.
+                You agree to indemnify and hold harmless Airsynca and Muhammad Ibrahim Ibrahim Abulmaaty from any claims, damages, or expenses arising from your use of the Service or violation of these Terms.
               </p>
             </section>
 
@@ -177,7 +180,7 @@ const TermsOfService = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">12. Governing Law</h2>
               <p className="text-gray-300 leading-relaxed">
-                These Terms shall be governed by and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law provisions.
+                These Terms shall be governed by and construed in accordance with the laws of Egypt, without regard to its conflict of law provisions.
               </p>
             </section>
 
@@ -198,7 +201,7 @@ const TermsOfService = () => {
               </p>
               <div className="bg-gray-800/50 rounded-lg p-4">
                 <p className="text-gray-300">
-                  <strong>Legal name:</strong> Muhammad Ibrahim Ibrahim Abulmaaty<br />
+                  <strong>Service Provider:</strong> Muhammad Ibrahim Ibrahim Abulmaaty<br />
                   <strong>Operating as:</strong> Airsynca<br />
                   <strong>Email:</strong> legal@airsynca.com<br />
                   <strong>Website:</strong> airsynca.com<br />

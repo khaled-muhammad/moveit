@@ -44,7 +44,7 @@ const PrivacyPolicy = () => {
                 1. Introduction
               </h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Airsynca ("we," "us," or "our"), operated by Muhammad Ibrahim Ibrahim Abulmaaty, is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our content sharing and collaboration platform.
+                Airsynca ("we," "us," or "our"), operated by Muhammad Ibrahim Ibrahim Abulmaaty as an individual service provider, is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our content sharing and collaboration platform.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 By using our Service, you consent to the data practices described in this policy.
@@ -74,7 +74,7 @@ const PrivacyPolicy = () => {
               </p>
               <ul className="text-gray-300 leading-relaxed list-disc list-inside space-y-2 mb-4">
                 <li>Device information (browser type, operating system, device identifiers)</li>
-                <li>IP address and location data</li>
+                <li>IP address and general location data (country/region level only)</li>
                 <li>Usage patterns and session data</li>
                 <li>Beam session information and content shared</li>
                 <li>Error logs and performance data</li>
@@ -82,7 +82,7 @@ const PrivacyPolicy = () => {
 
               <h3 className="text-xl font-semibold text-white mb-3">2.3 Content You Share</h3>
               <p className="text-gray-300 leading-relaxed">
-                We store the content you share through our Service, including text, images, audio, video, and files, solely for the purpose of providing the Service functionality.
+                We temporarily store the content you share through our Service, including text, images, audio, video, and files, solely for the purpose of providing the Service functionality. Content is automatically deleted after a specified period or when sessions end.
               </p>
             </section>
 
@@ -128,7 +128,7 @@ const PrivacyPolicy = () => {
                 <li>Regular security assessments and updates</li>
                 <li>Access controls and authentication measures</li>
                 <li>Secure data centers and infrastructure</li>
-                <li>Employee training on data protection</li>
+                <li>Content moderation and abuse prevention</li>
               </ul>
               <p className="text-gray-300 leading-relaxed">
                 However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.
@@ -147,7 +147,7 @@ const PrivacyPolicy = () => {
                 <li>Improve our Service</li>
               </ul>
               <p className="text-gray-300 leading-relaxed">
-                When you delete your account, we will delete or anonymize your personal information within 30 days, except where retention is required by law.
+                User-generated content is automatically deleted after 30 days of inactivity. When you delete your account, we will delete or anonymize your personal information within 30 days, except where retention is required by law.
               </p>
             </section>
 
@@ -240,12 +240,12 @@ const PrivacyPolicy = () => {
               </p>
               <div className="bg-gray-800/50 rounded-lg p-4">
                 <p className="text-gray-300">
-                  <strong>Legal name:</strong> Muhammad Ibrahim Ibrahim Abulmaaty<br />
+                  <strong>Service Provider:</strong> Muhammad Ibrahim Ibrahim Abulmaaty<br />
                   <strong>Operating as:</strong> Airsynca<br />
                   <strong>Email:</strong> privacy@airsynca.com<br />
                   <strong>Website:</strong> airsynca.com<br />
                   <strong>Address:</strong> St.268, Alexandria, Egypt<br />
-                  <strong>Data Protection Officer:</strong> dpo@airsynca.com
+                  <strong>Data Protection Contact:</strong> dpo@airsynca.com
                 </p>
               </div>
             </section>
