@@ -6,6 +6,11 @@ import QRCodeDisplay from "../components/QRCodeDisplay";
 import Logo from "../components/Logo";
 import StickyNoteContainer from "../components/StickyNoteContainer";
 import Footer from "../components/Footer";
+import HeroSection from "../components/HeroSection";
+import OnboardingFlow from "../components/OnboardingFlow";
+import ShareModal from "../components/ShareModal";
+import { ConnectionStatus, LoadingSpinner } from "../components/LoadingStates";
+import Button, { IconButton, PrimaryButton } from "../components/Button";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { CloseButton } from "../components/closeBtn";
@@ -173,6 +178,10 @@ const DesktopPage = () => {
   const [beamName, setBeamName] = useState('');
   const [fileInputRef, setFileInputRef] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [showHero, setShowHero] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     if (queryBeamId != null && (!session || session.beam_id !== queryBeamId)) {
@@ -184,8 +193,23 @@ const DesktopPage = () => {
       })
       const url = new URL(window.location.href)
       window.history.replaceState({}, '', url)
+      setShowHero(false); // Hide hero when joining via URL
     }
   }, [queryBeamId, session?.beam_id])
+
+  // Check if user has seen onboarding before
+  useEffect(() => {
+    const hasSeenOnboardingBefore = localStorage.getItem('airsynca_onboarding_seen');
+    const hasExistingSessions = localStorage.getItem('airsynca_sessions');
+    
+    if (!hasSeenOnboardingBefore && !hasExistingSessions && !queryBeamId) {
+      setHasSeenOnboarding(false);
+      setShowHero(true);
+    } else {
+      setHasSeenOnboarding(true);
+      setShowHero(false);
+    }
+  }, [queryBeamId])
 
   useEffect(() => {
     if (session != null) {
@@ -198,7 +222,7 @@ const DesktopPage = () => {
   useEffect(() => {
     if (lastJsonMessage != null) {
       if (lastJsonMessage.type === 'auth_sucess') {
-        toast("Beaming");
+        toast("Connected to Room");
       } else {
         // toast(lastJsonMessage.message);
       }
@@ -243,20 +267,28 @@ const DesktopPage = () => {
     }
   };
 
-  const handleShareBeam = async () => {
-    if (navigator.share) {
+  const handleShareBeam = () => {
+    setShowShareModal(true);
+  };
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Room link copied to clipboard!");
+    } catch (error) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
       try {
-        await navigator.share({
-          title: "Airsynca Beam",
-          text: `Join my Beam on Airsynca!`,
-          url: `${window.location.origin}?beam_id=${session.beam_id}`,
-        });
-        console.log("Shared successfully");
-      } catch (error) {
-        console.error("Error sharing:", error);
+        document.execCommand('copy');
+        toast.success("Room link copied to clipboard!");
+      } catch (fallbackError) {
+        toast.error("Failed to copy link. Please copy manually: " + text);
       }
-    } else {
-      alert("Sharing is not supported on this device/browser.");
+      document.body.removeChild(textArea);
     }
   };
 
@@ -265,9 +297,9 @@ const DesktopPage = () => {
       saveBeam(beamName.trim());
       setShowSaveModal(false);
       setBeamName('');
-      toast.success('Beam saved successfully!');
+      toast.success('Room saved successfully!');
     } else {
-      toast.error('Please enter a beam name');
+      toast.error('Please enter a room name');
     }
   }
 
@@ -306,6 +338,30 @@ const DesktopPage = () => {
       handleFileUpload(files);
     }
     e.target.value = null; // Reset input
+  }
+
+  const handleGetStarted = () => {
+    setShowHero(false);
+    setShowOnboarding(true);
+  }
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    setHasSeenOnboarding(true);
+    localStorage.setItem('airsynca_onboarding_seen', 'true');
+    // Create a new session to get started
+    if (!session) {
+      // The session will be automatically created by the SessionProvider
+    }
+  }
+
+  const handleSkipOnboarding = () => {
+    setShowOnboarding(false);
+    setHasSeenOnboarding(true);
+    localStorage.setItem('airsynca_onboarding_seen', 'true');
+    if (!session) {
+      // The session will be automatically created by the SessionProvider
+    }
   }
 
   // Drag and drop handlers
@@ -356,8 +412,30 @@ const DesktopPage = () => {
     }
   }
 
+  // Show hero section for new users
+  if (showHero && !hasSeenOnboarding) {
+    return (
+      <>
+        <HeroSection onGetStarted={handleGetStarted} />
+        {showOnboarding && (
+          <OnboardingFlow
+            onComplete={handleOnboardingComplete}
+            onSkip={handleSkipOnboarding}
+          />
+        )}
+      </>
+    );
+  }
+
   return (
     <>
+      {showOnboarding && (
+        <OnboardingFlow 
+          onComplete={handleOnboardingComplete}
+          onSkip={handleSkipOnboarding}
+        />
+      )}
+      
       <section
         id="main"
         className="flex justify-center items-center gap-5 flex-col min-h-[100vh] relative"
@@ -366,15 +444,30 @@ const DesktopPage = () => {
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
+        {/* Connection Status & Mini QR XXX */}
+        {/* <div className="fixed bottom-4 right-4 z-[11] flex items-center gap-4">
+          {session && (
+            <div className="bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 border border-gray-700 shadow-lg">
+              <div className="flex items-center gap-3">
+                <ConnectionStatus isConnected={isConnected} />
+                <div className="text-right">
+                  <p className="text-xs text-gray-400">Room</p>
+                  <p className="text-sm font-mono text-white">{session.beam_id?.slice(0, 8)}...</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div> */}
+
         <div className={`fixed bottom-0 left-0 mb-8 ml-8 bg-white rounded-md z-[11]`}>
           {connectedDevices.length > 1 && session && (
             <div className="relative group hover:cursor-pointer" onClick={() => {
             navigator.clipboard.writeText(session.beam_id)
               .then(() => {
-                toast("Beam ID copied successfully");
+                toast("Room ID copied successfully");
               })
               .catch((err) => {
-                toast("Failed to copy beam ID!");
+                toast("Failed to copy Room ID!");
               });
             }}>
               <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={100} className="group" />
@@ -385,39 +478,55 @@ const DesktopPage = () => {
           )}
         </div>
 
-        {connectedDevices.length <= 1 && session && (
-          <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={300} className="mb-10 transition-all duration-300 hover:scale-125" />
+        {connectedDevices.length <= 1 && session && sharedClipboards.length == 0 && (
+          <div>
+            <QRCodeDisplay session={`${window.location.origin}?beam_id=${session.beam_id}`} size={300} className="mb-10 transition-all duration-300 hover:scale-125" />
+            {/* <button className="relative z-[11]" onClick={() => {
+              alert("A")
+            }}>Hide</button> */}
+          </div>
         )}
         {sharedClipboards.length == 0 && <h1 className="text-3xl">
           {connectedDevices.length > 1? "Start Sharing" : "Scan the QR Code with your mobile phone to start sharing."}
         </h1>}
         {sharedClipboards.length == 0 && <h4>Share Clipboards / Links / Pictures / Videos</h4>}
-        {sharedClipboards.length == 0 && <div className="flex gap-8 mt-2 brain-boom-btns">
+        {sharedClipboards.length == 0 && <div className="flex flex-wrap gap-4 mt-8 justify-center">
           <KnowMoreButton />
-          <a
-            href="https://github.com/khaled-muhammad/moveit"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="brain-boom-btn"
+          <Button
+            variant="secondary"
+            icon={FiGithub}
+            onClick={() => window.open("https://github.com/khaled-muhammad/moveit", "_blank")}
           >
-            <FiGithub />
             GitHub Repo
-          </a>
-          <button className="brain-boom-btn" onClick={() => {
-            navigator.clipboard.writeText(session.beam_id).then(() => {
-              toast("Beam ID copied successfully")
-            }).catch((err) => {
-              toast.error("Failed to copy Beam ID!")
-            })
-          }}><FiCopy /> Copy</button>
+          </Button>
+          <Button
+            variant="ghost"
+            icon={FiCopy}
+            onClick={() => {
+              navigator.clipboard.writeText(session.beam_id).then(() => {
+                toast("Room ID copied successfully")
+              }).catch((err) => {
+                toast.error("Failed to copy Room ID!")
+              })
+            }}
+          >
+            Copy Room ID
+          </Button>
+          <Button
+            variant="primary"
+            icon={FiShare2}
+            onClick={handleShareBeam}
+          >
+            Share Room
+          </Button>
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
         
         {sharedClipboards.length > 0 && isAuthenticated && session.beam_name == null && <motion.div
           className={`fixed ${isNoteEditorFullScreen ? 'z-[100]' : 'z-[11]'}`}
           animate={{
-            bottom: isNoteEditorFullScreen ? "20px" : sharedClipboards.length > 0 ? "80px" : "20px",
-            left: isNoteEditorFullScreen ? "auto" : "calc(50% + 120px)",
+            bottom: isNoteEditorFullScreen ? "20px" : sharedClipboards.length > 0 ? "85px" : "20px",
+            left: isNoteEditorFullScreen ? "auto" : "calc(50% + 160px)",
           }}
           transition={{
             type: "spring", 
@@ -426,13 +535,13 @@ const DesktopPage = () => {
             duration: 0.4
           }}
         >
-          <motion.button
-            className="bg-violet-600/20 backdrop-blur-md ring-2 ring-violet-700 p-4 rounded-2xl cursor-pointer hover:bg-violet-500/30 transition-colors shadow-lg"
-            whileTap={{ scale: 0.9 }}
+          <Button
+            variant="primary"
             onClick={handleSaveClick}
+            className="shadow-2xl hover:shadow-violet-500/25"
           >
-            Save
-          </motion.button>
+            Save Room
+          </Button>
         </motion.div>}
         
         {
@@ -440,7 +549,7 @@ const DesktopPage = () => {
             className={`toolbar fixed ${isNoteEditorFullScreen? 'z-[100]' : 'z-[11]'} px-6 py-3 bg-violet-600/20 backdrop-blur-md ring-2 ring-violet-700 flex gap-10 justify-center items-center`}
             animate={{
               width: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "400px" : "200px",
-              minWidth: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "400px" : "200px",
+              minWidth: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "400px" : "300px",
               height: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "80px" : "60px",
               minHeight: isNoteEditorFullScreen ? "100%" : isToolbarExpanded ? "80px" : "60px",
               bottom: isNoteEditorFullScreen ? "0" : sharedClipboards.length > 0 ? "80px" : "20px",
@@ -478,42 +587,34 @@ const DesktopPage = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <motion.button
-                  className="toolbar-btn"
+                <IconButton
+                  icon={FiClipboard}
                   onClick={pasteClipboard}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
                   title="Paste clipboard"
-                >
-                  <FiClipboard size={22} />
-                </motion.button>
-                <motion.button
-                  className="toolbar-btn"
+                  variant="ghost"
+                  size="md"
+                />
+                <IconButton
+                  icon={FiUpload}
                   onClick={triggerFileUpload}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
                   title="Upload files"
-                >
-                  <FiUpload size={22} />
-                </motion.button>
-                <motion.button
-                  className="toolbar-btn"
+                  variant="ghost"
+                  size="md"
+                />
+                <IconButton
+                  icon={FiPlus}
                   onClick={() => setIsToolbarExpanded(true)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
                   title="Add message"
-                >
-                  <FiPlus size={22} />
-                </motion.button>
-                <motion.button
-                  className="toolbar-btn"
+                  variant="primary"
+                  size="md"
+                />
+                <IconButton
+                  icon={FiShare2}
                   onClick={handleShareBeam}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  title="Share beam"
-                >
-                  <FiShare2 size={22} />
-                </motion.button>
+                  title="Share room"
+                  variant="ghost"
+                  size="md"
+                />
               </motion.div>
             ) : (
               <motion.div
@@ -644,7 +745,7 @@ const DesktopPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Save Beam Modal */}
+      {/* Save Room Modal */}
       <AnimatePresence>
         {showSaveModal && (
           <motion.div 
@@ -674,18 +775,18 @@ const DesktopPage = () => {
               </button>
               
               <h2 className="text-2xl font-bold mb-4 text-center text-white">
-                Save Beam
+                Save Room
               </h2>
               
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Beam Name
+                  Room Name
                 </label>
                 <input
                   type="text"
                   value={beamName}
                   onChange={(e) => setBeamName(e.target.value)}
-                  placeholder="Enter beam name..."
+                  placeholder="Enter room name..."
                   className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                   autoFocus
                   onKeyPress={(e) => {
@@ -719,6 +820,14 @@ const DesktopPage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        roomId={session?.beam_id}
+        roomName={session?.beam_name}
+      />
     </>
   );
 };

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "./components/SessionProvider";
 import { WebSocketProvider } from "./components/WebSocketProvider";
 import { useAuth } from "./contexts/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 const Layout = () => {
   const [isMobile, setIsMobile] = useState(true);
@@ -28,7 +29,7 @@ const Layout = () => {
   return (
     <WebSocketProvider session={session}>
       <div className="min-h-[100%] flex flex-col justify-between items-center gap-5">
-        <Logo className="text-4xl z-[91474836489999999]" />
+        <Logo className="text-4xl z-[91474836489999998]" />
         {!isMobile && (
           <nav className="fixed z-[91474836489999990] top-5 right-5 flex items-center gap-4">
             <div className="bg-[#1A1B2E]/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl px-6 py-3 shadow-2xl"
@@ -310,6 +311,7 @@ const Layout = () => {
         )}
       </div>
       <Footer />
+      <Toaster position="bottom-center" />
     </WebSocketProvider>
   );
 };

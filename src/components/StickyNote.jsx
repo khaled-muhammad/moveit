@@ -46,7 +46,7 @@ const LexicalReader = ({ editorState }) => {
   );
 };
 
-const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onMove, cameraPosition, worldX, worldY, isBeamNote, noteData, user }) => {
+const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onMove, onScale, cameraPosition, worldX, worldY, isBeamNote, noteData, user, scale = 1 }) => {
   const colors = [
     'from-purple-400 to-indigo-500',
     'from-indigo-400 to-blue-500',
@@ -56,6 +56,10 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
   ];
 
   const rotations = [-3, -2, -1, 0, 1, 2, 3];
+
+  // Scale limits
+  const MIN_SCALE = 0.5;
+  const MAX_SCALE = 3.0;
 
   const getColorIndex = () => {
     if (typeof index === 'number') {
@@ -82,37 +86,129 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
   };
 
   const [isDragging, setIsDragging] = useState(false);
+  const [isScaling, setIsScaling] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragStartWorld, setDragStartWorld] = useState({ x: 0, y: 0 });
+  const [scaleStart, setScaleStart] = useState(1);
+  const [activeCorner, setActiveCorner] = useState(null);
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+  const [initialDiagonal, setInitialDiagonal] = useState(1);
+
+  // Helper function to detect if click is near corner (adaptive to scale)
+  const isNearCorner = (e, corner) => {
+    const rect = noteRef.current.getBoundingClientRect();
+    const cornerSize = Math.max(24, 24 * (scale || 1));
+    
+    const corners = {
+      'top-left': { x: rect.left, y: rect.top },
+      'top-right': { x: rect.right, y: rect.top },
+      'bottom-left': { x: rect.left, y: rect.bottom },
+      'bottom-right': { x: rect.right, y: rect.bottom }
+    };
+    
+    const cornerPos = corners[corner];
+    const distance = Math.sqrt(
+      Math.pow(e.clientX - cornerPos.x, 2) + 
+      Math.pow(e.clientY - cornerPos.y, 2)
+    );
+    
+    return distance <= cornerSize;
+  };
+
+  // Check if mouse is near any corner
+  const getCornerType = (e) => {
+    const corners = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+    for (const corner of corners) {
+      if (isNearCorner(e, corner)) {
+        return corner;
+      }
+    }
+    return null;
+  };
+
+  const startScalingFromCorner = (e, cornerType) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsScaling(true);
+    setScaleStart(scale);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setActiveCorner(cornerType);
+
+    // Determine opposite corner as anchor
+    const rect = noteRef.current.getBoundingClientRect();
+    const corners = {
+      'top-left': { x: rect.left, y: rect.top },
+      'top-right': { x: rect.right, y: rect.top },
+      'bottom-left': { x: rect.left, y: rect.bottom },
+      'bottom-right': { x: rect.right, y: rect.bottom }
+    };
+    const oppositeMap = {
+      'top-left': 'bottom-right',
+      'top-right': 'bottom-left',
+      'bottom-left': 'top-right',
+      'bottom-right': 'top-left'
+    };
+    const anchor = corners[oppositeMap[cornerType]];
+    setAnchorPoint(anchor);
+    const startDist = Math.max(1, Math.hypot(e.clientX - anchor.x, e.clientY - anchor.y));
+    setInitialDiagonal(startDist);
+  };
 
   const handleMouseDown = (e) => {
     e.preventDefault();
     setZIndex(Date.now());
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
-    setDragStartWorld({ x: worldX || 0, y: worldY || 0 });
+    
+    // If user pressed on a corner handle, use it directly
+    const cornerHandle = e.target.closest('[data-corner]');
+    if (cornerHandle) {
+      const cornerType = cornerHandle.getAttribute('data-corner');
+      return startScalingFromCorner(e, cornerType);
+    }
+
+    const cornerType = getCornerType(e);
+    if (cornerType) {
+      // Start scaling using proximity (fallback if not clicking explicit handle)
+      return startScalingFromCorner(e, cornerType);
+    } else {
+      // Start dragging
+      setIsDragging(true);
+      setDragStart({ x: e.clientX, y: e.clientY });
+      setDragStartWorld({ x: worldX || 0, y: worldY || 0 });
+    }
   };
 
   const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
-    
-    const newWorldX = dragStartWorld.x + deltaX;
-    const newWorldY = dragStartWorld.y + deltaY;
-    
-    if (onMove) {
-      onMove(newWorldX, newWorldY);
+    if (isDragging) {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      
+      const newWorldX = dragStartWorld.x + deltaX;
+      const newWorldY = dragStartWorld.y + deltaY;
+      
+      if (onMove) {
+        onMove(newWorldX, newWorldY);
+      }
+    } else if (isScaling) {
+      // Corner-anchored scaling: compare current distance to anchor vs initial distance
+      const currentDist = Math.max(1, Math.hypot(e.clientX - anchorPoint.x, e.clientY - anchorPoint.y));
+      let ratio = currentDist / initialDiagonal;
+      let newScale = scaleStart * ratio;
+      // Apply limits
+      newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+      if (onScale) {
+        onScale(newScale);
+      }
     }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    setIsScaling(false);
+    setActiveCorner(null);
   };
 
   useEffect(() => {
-    if (isDragging) {
+    if (isDragging || isScaling) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       
@@ -121,22 +217,48 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, dragStart, dragStartWorld]);
+  }, [isDragging, isScaling, dragStart, dragStartWorld, scaleStart, scale]);
+
+  // Add mouse move handler for cursor changes
+  const getCursorForCorner = (corner) => {
+    if (!corner) return 'move';
+    const map = {
+      'top-left': 'nw-resize',
+      'top-right': 'ne-resize',
+      'bottom-left': 'sw-resize',
+      'bottom-right': 'se-resize'
+    };
+    return map[corner] || 'move';
+  };
+
+  const handleMouseMoveForCursor = (e) => {
+    if (!isDragging && !isScaling) {
+      // Prefer explicit handles for accuracy under high scale
+      const cornerHandle = e.target.closest('[data-corner]');
+      if (cornerHandle) {
+        noteRef.current.style.cursor = getCursorForCorner(cornerHandle.getAttribute('data-corner'));
+      } else {
+        const cornerType = getCornerType(e);
+        noteRef.current.style.cursor = getCursorForCorner(cornerType);
+      }
+    }
+  };
 
   return (
     <motion.div
       ref={noteRef}
-      className={`absolute bg-gradient-to-br ${colorClass} p-4 rounded-lg shadow-lg w-64 cursor-move pointer-events-auto`}
+      className={`absolute bg-gradient-to-br ${colorClass} p-4 rounded-lg shadow-lg w-64 pointer-events-auto relative`}
       style={{
         zIndex,
         rotate: `${rotation}deg`,
-        boxShadow: isDragging ? '0 10px 25px rgba(127, 90, 240, 0.5)' : '0 4px 20px rgba(127, 90, 240, 0.3)',
-        transform: isDragging ? 'scale(1.05)' : 'scale(1)',
+        boxShadow: (isDragging || isScaling) ? '0 10px 25px rgba(127, 90, 240, 0.5)' : '0 4px 20px rgba(127, 90, 240, 0.3)',
+        transform: `scale(${isDragging ? scale * 1.05 : scale})`,
+        cursor: isScaling ? getCursorForCorner(activeCorner) : 'move',
       }}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{
         opacity: 1,
-        scale: 1,
+        scale: scale,
         x: screenPosition.x,
         y: screenPosition.y,
       }}
@@ -145,8 +267,10 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         stiffness: 300,
         damping: 20,
         opacity: { duration: 0.3 },
+        scale: { duration: 0.2 },
       }}
       onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMoveForCursor}
       onDoubleClick={() => {
         if (type === "audio") {
           const audio = noteRef.current.querySelector('audio');
@@ -181,9 +305,31 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         }
       }}
     >
+      {/* Corner resize handles (explicit interactive targets) */}
+      <div
+        data-corner="top-left"
+        onMouseDown={(e) => startScalingFromCorner(e, 'top-left')}
+        className="absolute top-0 left-0 w-5 h-5 bg-white/20 rounded-br-lg rounded-tl-lg cursor-nw-resize hover:bg-opacity-40 transition-all pointer-events-auto"
+      />
+      <div
+        data-corner="top-right"
+        onMouseDown={(e) => startScalingFromCorner(e, 'top-right')}
+        className="absolute top-0 right-0 w-5 h-5 bg-white/20 rounded-bl-lg rounded-tr-lg cursor-ne-resize hover:bg-opacity-40 transition-all pointer-events-auto"
+      />
+      <div
+        data-corner="bottom-left"
+        onMouseDown={(e) => startScalingFromCorner(e, 'bottom-left')}
+        className="absolute bottom-0 left-0 w-5 h-5 bg-white/20 rounded-tr-lg rounded-bl-lg cursor-sw-resize hover:bg-opacity-40 transition-all pointer-events-auto"
+      />
+      <div
+        data-corner="bottom-right"
+        onMouseDown={(e) => startScalingFromCorner(e, 'bottom-right')}
+        className="absolute bottom-0 right-0 w-5 h-5 bg-white/20 rounded-tl-lg rounded-br-lg cursor-se-resize hover:bg-opacity-40 transition-all pointer-events-auto"
+      />
+      
       <button
         onClick={onRemove}
-        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-white bg-opacity-30 flex items-center justify-center text-black hover:bg-opacity-50 transition-all pointer-events-auto cursor-pointer"
+        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-white bg-opacity-30 flex items-center justify-center text-black hover:bg-opacity-50 transition-all pointer-events-auto cursor-pointer z-10"
       >
         <FiX />
       </button>
