@@ -329,6 +329,6 @@ If you have any questions or need help, please:
 
 ---
 
-**Made with ❤️ by [Muhammad Ibrahim Ibrahim Abulmaaty](https://github.com/khaled-muhammad)**
+**Made with ❤️ by [Khaled Muhammad](https://github.com/khaled-muhammad)**
 
 *Airsynca - Instant content sharing between devices with persistent sessions*
