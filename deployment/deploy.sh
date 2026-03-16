@@ -172,12 +172,44 @@ pip install gunicorn uvicorn[standard] psycopg2-binary
 
 SECRET_KEY=$(python3 -c "import secrets;print(secrets.token_urlsafe(50))")
 
+# Create or update the .env file
 cat > .env <<EOF
 DEBUG=False
 ENVIRONMENT=$ENVIRONMENT
 SECRET_KEY=$SECRET_KEY
 ALLOWED_HOSTS=$DOMAIN_NAME,localhost,127.0.0.1
+
+# Django settings
+DJANGO_SETTINGS_MODULE=moveit.settings
+
+# Database settings (if using PostgreSQL)
+$(if [[ $USE_PG =~ ^[Yy]$ ]]; then
+    echo "DB_NAME=$DB_NAME"
+    echo "DB_USER=$DB_USER"
+    echo "DB_PASSWORD=$DB_PASSWORD"
+    echo "DB_HOST=localhost"
+    echo "DB_PORT=5432"
+else
+    echo "# Using SQLite by default"
+fi)
+
+# Frontend/Backend endpoints
+FRONTEND_ENDPOINT=$DOMAIN_NAME
+BACKEND_ENDPOINT=$DOMAIN_NAME
+
+# Redis settings
+REDIS_URL=redis://localhost:6379
+
+# Email settings (if needed)
+# EMAIL_HOST=smtp.gmail.com
+# EMAIL_PORT=587
+# EMAIL_HOST_USER=your-email@gmail.com
+# EMAIL_HOST_PASSWORD=your-password
 EOF
+
+# Also export the variables for the current session
+export FRONTEND_ENDPOINT="$DOMAIN_NAME"
+export BACKEND_ENDPOINT="$DOMAIN_NAME"
 
 #################################
 # Django setup
