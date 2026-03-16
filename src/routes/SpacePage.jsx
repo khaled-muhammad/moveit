@@ -100,15 +100,6 @@ const SpacePage = () => {
         {sharedClipboards.length == 0 && <h4 className="text-center">Share Clipboards / Links / Pictures / Videos</h4>}
         {sharedClipboards.length == 0 && <div className="flex flex-col sm:flex-row gap-8 mt-2 brain-boom-btns">
           {/* <KnowMoreButton /> */}
-          <a
-            href="https://github.com/khaled-muhammad/moveit"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="brain-boom-btn"
-          >
-            <FiGithub />
-            GitHub Repo
-          </a>
         </div>}
         {sharedClipboards.length > 0 && (
           <div className="md:hidden w-full flex flex-col flex-1 overflow-hidden mt-20 relative z-10">

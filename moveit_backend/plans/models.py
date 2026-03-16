@@ -39,6 +39,15 @@ class Plan(models.Model):
     has_custom_branding = models.BooleanField(default=False)
     has_analytics = models.BooleanField(default=False)
     has_team_collaboration = models.BooleanField(default=False)
+    # New recurring value features
+    has_templates = models.BooleanField(default=False)
+    has_version_history = models.BooleanField(default=False)
+    has_cloud_backup = models.BooleanField(default=False)
+    has_cross_device_sync = models.BooleanField(default=False)
+    has_ocr = models.BooleanField(default=False)
+    has_audio_transcription = models.BooleanField(default=False)
+    has_presentation_mode = models.BooleanField(default=False)
+    has_share_analytics = models.BooleanField(default=False)
     
     # Support Level
     SUPPORT_LEVELS = (

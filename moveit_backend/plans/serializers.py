@@ -16,7 +16,10 @@ class PlanSerializer(serializers.ModelSerializer):
             'session_history_days', 'has_rich_editor', 'has_file_uploads',
             'has_advanced_permissions', 'has_api_access', 'has_sso_integration',
             'has_priority_support', 'has_custom_branding', 'has_analytics',
-            'has_team_collaboration', 'support_level', 'features', 'is_active'
+            'has_team_collaboration', 'has_templates', 'has_version_history',
+            'has_cloud_backup', 'has_cross_device_sync', 'has_ocr',
+            'has_audio_transcription', 'has_presentation_mode', 'has_share_analytics',
+            'support_level', 'features', 'is_active'
         ]
     
     def get_yearly_savings(self, obj):
@@ -70,6 +73,24 @@ class PlanSerializer(serializers.ModelSerializer):
         
         if obj.has_team_collaboration:
             features.append("Team collaboration dashboard")
+
+        # New recurring value features
+        if obj.has_templates:
+            features.append("Session templates & presets")
+        if obj.has_version_history:
+            features.append("Version history")
+        if obj.has_cloud_backup:
+            features.append("Cloud backup & restore")
+        if obj.has_cross_device_sync:
+            features.append("Cross-device sync")
+        if obj.has_ocr:
+            features.append("Image OCR")
+        if obj.has_audio_transcription:
+            features.append("Audio transcription")
+        if obj.has_presentation_mode:
+            features.append("Fullscreen presentation mode")
+        if obj.has_share_analytics:
+            features.append("Share analytics")
         
         # Support level
         support_mapping = {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FiX } from 'react-icons/fi';
+import { FiDroplet, FiMenu, FiX, FiTrash2, FiMaximize2, FiShare2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -13,6 +13,7 @@ import {
 } from 'lexical';
 import ExampleTheme from './ExampleTheme';
 import { ImageNode } from './plugins/ImageNode.jsx';
+import { BsThreeDots } from 'react-icons/bs';
 
 
 const readerConfig = {
@@ -93,6 +94,8 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
   const [activeCorner, setActiveCorner] = useState(null);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [initialDiagonal, setInitialDiagonal] = useState(1);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Helper function to detect if click is near corner (adaptive to scale)
   const isNearCorner = (e, corner) => {
@@ -219,6 +222,20 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
     }
   }, [isDragging, isScaling, dragStart, dragStartWorld, scaleStart, scale]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isDropdownOpen]);
+
   // Add mouse move handler for cursor changes
   const getCursorForCorner = (corner) => {
     if (!corner) return 'move';
@@ -242,6 +259,36 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         noteRef.current.style.cursor = getCursorForCorner(cornerType);
       }
     }
+  };
+
+  // Dropdown menu handlers
+  const handleDropdownToggle = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDropdownOpen(false);
+    onRemove();
+  };
+
+  const handleFullscreen = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDropdownOpen(false);
+    // TODO: Implement fullscreen functionality
+    toast("Fullscreen mode coming soon!");
+  };
+
+  const handleShare = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDropdownOpen(false);
+    // TODO: Implement share functionality
+    toast("Share functionality coming soon!");
   };
 
   return (
@@ -305,6 +352,52 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         }
       }}
     >
+      {/* Dropdown Menu */}
+      <div className="absolute -top-10 -right-10 z-20" ref={dropdownRef}>
+        <button
+          onClick={handleDropdownToggle}
+          className="w-8 h-8 rounded-full bg-white bg-opacity-20 backdrop-blur-md flex items-center justify-center text-black hover:bg-opacity-30 transition-all pointer-events-auto cursor-pointer shadow-lg"
+        >
+          <BsThreeDots className="text-sm" />
+        </button>
+        
+        {/* Dropdown Menu */}
+        {isDropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -10 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute top-10 right-0 w-48 bg-gradient-to-br from-purple-900/90 to-indigo-900/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-purple-400/20 overflow-hidden"
+          >
+            <div className="p-2">
+              <button
+                onClick={handleDelete}
+                className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-red-500/20 hover:text-red-300 rounded-xl transition-all duration-200 group"
+              >
+                <FiTrash2 className="text-lg group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Delete</span>
+              </button>
+              
+              <button
+                onClick={handleFullscreen}
+                className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-blue-500/20 hover:text-blue-300 rounded-xl transition-all duration-200 group"
+              >
+                <FiMaximize2 className="text-lg group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Fullscreen</span>
+              </button>
+              
+              <button
+                onClick={handleShare}
+                className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-green-500/20 hover:text-green-300 rounded-xl transition-all duration-200 group"
+              >
+                <FiShare2 className="text-lg group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Share</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </div>
       {/* Corner resize handles (explicit interactive targets) */}
       <div
         data-corner="top-left"
@@ -327,12 +420,7 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
         className="absolute bottom-0 right-0 w-5 h-5 bg-white/20 rounded-tl-lg rounded-br-lg cursor-se-resize hover:bg-opacity-40 transition-all pointer-events-auto"
       />
       
-      <button
-        onClick={onRemove}
-        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-white bg-opacity-30 flex items-center justify-center text-black hover:bg-opacity-50 transition-all pointer-events-auto cursor-pointer z-10"
-      >
-        <FiX />
-      </button>
+
       <div className="text-white break-words whitespace-pre-wrap select-text">
         {/* User information display */}
         {user && (
@@ -350,7 +438,7 @@ const StickyNote = ({ content, type, index, onRemove, constraintsRef = null, onM
                   }}
                 />
               ) : null}
-              <div className={`w-6 h-6 bg-white bg-opacity-30 rounded-full flex items-center justify-center text-xs font-semibold ${user.profile_picture ? 'hidden' : ''}`}>
+              <div className={`w-6 h-6 bg-purple-500 bg-opacity-30 rounded-full flex items-center justify-center text-xs font-semibold ${user.profile_picture ? 'hidden' : ''}`}>
                 {user.first_name ? user.first_name.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
               </div>
               <div>

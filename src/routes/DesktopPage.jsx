@@ -493,13 +493,6 @@ const DesktopPage = () => {
         {sharedClipboards.length == 0 && <div className="flex flex-wrap gap-4 mt-8 justify-center">
           <KnowMoreButton />
           <Button
-            variant="secondary"
-            icon={FiGithub}
-            onClick={() => window.open("https://github.com/khaled-muhammad/moveit", "_blank")}
-          >
-            GitHub Repo
-          </Button>
-          <Button
             variant="ghost"
             icon={FiCopy}
             onClick={() => {
@@ -512,13 +505,13 @@ const DesktopPage = () => {
           >
             Copy Room ID
           </Button>
-          <Button
-            variant="primary"
-            icon={FiShare2}
+          <button
+            className="brain-boom-btn group relative" 
             onClick={handleShareBeam}
           >
+            <FiShare2 className="mr-2" />
             Share Room
-          </Button>
+          </button>
         </div>}
         {sharedClipboards.length > 0 && <StickyNoteContainer />}
         

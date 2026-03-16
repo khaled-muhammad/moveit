@@ -49,8 +49,8 @@ const PricingPage = () => {
       id: 'pro',
       name: 'Pro',
       icon: <FiZap className="w-6 h-6" />,
-      price: { monthly: 9.99, yearly: 99.99 },
-      description: 'Ideal for professionals and power users',
+      price: { monthly: 8.0, yearly: 80.0 },
+      description: 'Ideal for professionals and power users who need more headroom',
       color: 'from-blue-400 to-indigo-600',
       bgColor: 'bg-blue-600/10',
       borderColor: 'border-blue-600/20',
@@ -58,12 +58,19 @@ const PricingPage = () => {
       features: [
         'Unlimited beam sessions',
         'Rich Lexi note editor',
-        'File uploads (up to 100MB per file)',
+        'File uploads (up to 200MB per file)',
         'Up to 10 connected devices per beam',
-        '30-day session history',
+        '60-day session history',
         'All content types (text, images, audio, video)',
         'Advanced drag & drop organization',
         'Session saving and naming',
+        'Templates & presets',
+        'Version history',
+        'Cloud backup & restore',
+        'Cross-device sync',
+        'Image OCR',
+        'Audio transcription',
+        'Fullscreen presentation mode',
         'Priority email support'
       ],
       limitations: []
@@ -72,49 +79,56 @@ const PricingPage = () => {
       id: 'premium',
       name: 'Premium',
       icon: <FiShield className="w-6 h-6" />,
-      price: { monthly: 19.99, yearly: 199.99 },
-      description: 'Advanced features for teams and heavy users',
+      price: { monthly: 16.0, yearly: 160.0 },
+      description: 'Advanced features for teams and heavy users who collaborate',
       color: 'from-purple-400 to-indigo-600',
       bgColor: 'bg-purple-600/10',
       borderColor: 'border-purple-600/20',
       features: [
         'Everything in Pro',
-        'Advanced file uploads (up to 500MB per file)',
+        'Advanced file uploads (up to 1000MB per file)',
         'Unlimited connected devices',
         'Unlimited session history',
         'Advanced beam sharing permissions',
         'Session templates & presets',
         'Advanced archive management',
         'Custom beam organization',
+        'Team collaboration dashboard',
         'Live chat support',
+        'Cloud backup & restore',
+        'Cross-device sync',
+        'Image OCR',
+        'Audio transcription',
+        'Fullscreen presentation mode',
+        'Share analytics',
         'Export capabilities'
       ],
       limitations: []
     },
-    {
-      id: 'enterprise',
-      name: 'Enterprise',
-      icon: <FiUsers className="w-6 h-6" />,
-      price: { monthly: 49.99, yearly: 499.99 },
-      description: 'Full-scale solution for organizations',
-      color: 'from-indigo-400 to-purple-600',
-      bgColor: 'bg-indigo-600/10',
-      borderColor: 'border-indigo-600/20',
-      features: [
-        'Everything in Premium',
-        'Team collaboration dashboard',
-        'Admin user management',
-        'Custom beam branding',
-        'API access for integrations',
-        'SSO integration',
-        'Advanced analytics',
-        'Custom file size limits',
-        'Priority support with SLA',
-        'Custom onboarding',
-        'White-label options'
-      ],
-      limitations: []
-    }
+    // {
+    //   id: 'enterprise',
+    //   name: 'Enterprise',
+    //   icon: <FiUsers className="w-6 h-6" />,
+    //   price: { monthly: 79.0, yearly: 790.0 },
+    //   description: 'Full-scale solution for organizations',
+    //   color: 'from-indigo-400 to-purple-600',
+    //   bgColor: 'bg-indigo-600/10',
+    //   borderColor: 'border-indigo-600/20',
+    //   features: [
+    //     'Everything in Premium',
+    //     'Team collaboration dashboard',
+    //     'Admin user management',
+    //     'Custom beam branding',
+    //     'API access for integrations',
+    //     'SSO integration',
+    //     'Advanced analytics',
+    //     'Custom file size limits',
+    //     'Priority support with SLA',
+    //     'Custom onboarding',
+    //     'White-label options'
+    //   ],
+    //   limitations: []
+    // }
   ];
 
   const handlePlanSelect = (planId) => {
@@ -208,7 +222,7 @@ const PricingPage = () => {
         </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">{/* Make it 4 when enterprise is avaialable */}
           {plans.map((plan, index) => {
             const price = isYearly ? plan.price.yearly : plan.price.monthly;
             const originalYearlyPrice = plan.price.monthly * 12;
@@ -357,15 +371,40 @@ const PricingPage = () => {
               </thead>
               <tbody className="space-y-4">
                 {[
-                  ['Beam Sessions', '3', 'Unlimited', 'Unlimited', 'Unlimited'],
-                  ['Connected Devices', '2', '10', 'Unlimited', 'Unlimited'],
-                  ['Session History', '7 days', '30 days', 'Unlimited', 'Unlimited'],
-                  ['File Uploads', '❌', '100MB', '500MB', 'Custom'],
-                  ['Rich Editor', '❌', '✅', '✅', '✅'],
-                  ['Advanced Permissions', '❌', '❌', '✅', '✅'],
-                  ['API Access', '❌', '❌', '❌', '✅'],
-                  ['SSO Integration', '❌', '❌', '❌', '✅'],
-                  ['Priority Support', '❌', 'Email', 'Live Chat', 'SLA'],
+                  // ['Beam Sessions', '3', 'Unlimited', 'Unlimited', 'Unlimited'],
+                  // ['Connected Devices', '2', '10', 'Unlimited', 'Unlimited'],
+                  // ['Session History', '7 days', '60 days', 'Unlimited', 'Unlimited'],
+                  // ['File Uploads', '❌', '200MB', '1000MB', 'Custom'],
+                  // ['Rich Editor', '❌', '✅', '✅', '✅'],
+                  // ['Advanced Permissions', '❌', '❌', '✅', '✅'],
+                  // ['Templates & Presets', '❌', '✅', '✅', '✅'],
+                  // ['Version History', '❌', '✅', '✅', '✅'],
+                  // ['Cloud Backup & Restore', '❌', '✅', '✅', '✅'],
+                  // ['Cross-Device Sync', '✅', '✅', '✅', '✅'],
+                  // ['Image OCR', '❌', '✅', '✅', '✅'],
+                  // ['Audio Transcription', '❌', '✅', '✅', '✅'],
+                  // ['Presentation Mode', '❌', '✅', '✅', '✅'],
+                  // ['Share Analytics', '❌', '❌', '✅', '✅'],
+                  // ['API Access', '❌', '❌', '❌', '✅'],
+                  // ['SSO Integration', '❌', '❌', '❌', '✅'],
+                  // ['Priority Support', '❌', 'Email', 'Live Chat', 'SLA'],
+                  ['Beam Sessions', '3', 'Unlimited', 'Unlimited'],
+                  ['Connected Devices', '2', '10', 'Unlimited'],
+                  ['Session History', '7 days', '60 days', 'Unlimited'],
+                  ['File Uploads', '❌', '200MB', '1000MB'],
+                  ['Rich Editor', '❌', '✅', '✅'],
+                  ['Advanced Permissions', '❌', '❌', '✅'],
+                  ['Templates & Presets', '❌', '✅', '✅'],
+                  ['Version History', '❌', '✅', '✅'],
+                  ['Cloud Backup & Restore', '❌', '✅', '✅'],
+                  ['Cross-Device Sync', '✅', '✅', '✅'],
+                  ['Image OCR', '❌', '✅', '✅'],
+                  ['Audio Transcription', '❌', '✅', '✅'],
+                  ['Presentation Mode', '❌', '✅', '✅'],
+                  ['Share Analytics', '❌', '❌', '✅'],
+                  ['API Access', '❌', '❌', '❌'],
+                  ['SSO Integration', '❌', '❌', '❌'],
+                  ['Priority Support', '❌', 'Email', 'Live Chat'],
                 ].map(([feature, ...values], index) => (
                   <motion.tr 
                     key={feature}

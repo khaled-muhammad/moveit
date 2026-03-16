@@ -39,6 +39,16 @@ Airsynca is a modern web application that allows you to easily share content bet
 - **Toast Notifications** - Elegant feedback for user actions
 - **Responsive Design** - Optimized for both desktop and mobile
 
+### 🔁 Recurring Value (Pro & Premium)
+- **Templates & Presets** - Start faster with reusable session and note templates
+- **Version History** - Roll back changes and audit what changed when
+- **Cloud Backup & Restore** - Peace of mind with easy restores
+- **Cross-Device Sync** - Seamless continuity across all your devices
+- **Image OCR** - Extract text from images for quick reuse
+- **Audio Transcription** - Turn audio into searchable text
+- **Fullscreen Presentation Mode** - Present or focus without distractions
+- **Share Analytics** - See engagement on shared beams/notes
+
 ### 🔒 Privacy & Security
 - **Privacy First** - Your data stays on your devices
 - **No Registration Required** - Start sharing immediately without accounts
@@ -123,6 +133,14 @@ Airsynca is a modern web application that allows you to easily share content bet
    cd moveit_backend
    python manage.py migrate
    ```
+
+### Seed/Update Default Plans (Pricing & Features)
+Run this anytime to create or update the default plan tiers with the latest pricing and feature flags shown on the Pricing page.
+
+```bash
+cd moveit_backend
+python manage.py create_default_plans
+```
 
 6. **Start the Development Servers**
 
@@ -224,6 +242,34 @@ moveit/
 ├── package.json                  # Node.js dependencies
 └── README.md                     # Project documentation
 ```
+
+## 💳 Pricing & Plans
+
+- **Free**: $0/month
+  - Up to 3 beam sessions, 2 connected devices, 7‑day history
+  - Cross‑device sync, core sharing features
+- **Pro**: $8/month or $80/year (save 2 months)
+  - Unlimited sessions, 10 devices, 60‑day history, 200MB uploads
+  - Templates, version history, cloud backup/restore, cross‑device sync
+  - Image OCR, audio transcription, fullscreen presentation mode
+  - Priority email support
+- **Premium**: $16/month or $160/year (save 2 months)
+  - Everything in Pro + 1000MB uploads, unlimited devices & history
+  - Advanced permissions, collaboration dashboard, share analytics
+  - Cloud backup/restore, OCR, transcription, presentation mode
+  - Live chat support, export capabilities
+  
+> Enterprise available on request: SSO, API, advanced analytics, SLA, branding.
+
+## 🧩 Plan Feature Flags (API)
+
+Plans expose capability flags via the API so the UI can gate and message upgrades precisely:
+
+- `has_templates`, `has_version_history`, `has_cloud_backup`, `has_cross_device_sync`
+- `has_ocr`, `has_audio_transcription`, `has_presentation_mode`, `has_share_analytics`
+- Plus existing flags: `has_rich_editor`, `has_file_uploads`, `has_advanced_permissions`, `has_team_collaboration`, `has_api_access`, `has_sso_integration`, `has_custom_branding`, `has_analytics`, `has_priority_support`
+
+Use `GET /api/plans/` for plan data and `GET /api/plans/comparison/` for a comparison payload. Seed/update defaults with `python manage.py create_default_plans`.
 
 ## 🔧 Configuration
 
