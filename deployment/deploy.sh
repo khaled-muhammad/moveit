@@ -150,7 +150,7 @@ sudo apt update && sudo apt upgrade -y
 
 # Install required packages
 log_info "Installing required packages..."
-sudo apt install -y nginx python3 python3-pip python3-venv nodejs npm redis-server postgresql postgresql-contrib curl wget git
+sudo apt install -y nginx python3 python3-pip python3-venv nodejs redis-server postgresql postgresql-contrib curl wget git
 
 # Create deployment directory
 log_info "Creating deployment directory..."
