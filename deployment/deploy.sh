@@ -225,7 +225,7 @@ sudo systemctl enable redis-server
 
 # Copy project files
 log_info "Copying project files..."
-cp -r $(pwd) $DEPLOY_PATH/
+cp -r $(pwd)/* $DEPLOY_PATH/
 
 # Setup backend
 log_info "Setting up backend..."
