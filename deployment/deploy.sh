@@ -160,10 +160,62 @@ sudo chown $USER:$USER $DEPLOY_PATH
 # Setup PostgreSQL if needed
 if [[ "$DB_TYPE" == "postgresql" ]]; then
     log_info "Setting up PostgreSQL..."
-    sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
-    sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
-    sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
-    sudo -u postgres psql -c "ALTER USER $DB_USER CREATEDB;"
+    
+    # Check if database already exists
+    if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
+        log_warning "Database '$DB_NAME' already exists"
+        read -p "Use existing database '$DB_NAME'? (y/n): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            read -p "Enter a new database name: " NEW_DB_NAME
+            if [[ -z "$NEW_DB_NAME" ]]; then
+                log_error "Database name is required"
+                exit 1
+            fi
+            DB_NAME=$NEW_DB_NAME
+        fi
+    fi
+    
+    # Check if user already exists
+    if sudo -u postgres psql -t -c '\du' | cut -d \| -f 1 | grep -qw "$DB_USER"; then
+        log_warning "Database user '$DB_USER' already exists"
+        read -p "Use existing user '$DB_USER'? (y/n): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            read -p "Enter a new database user: " NEW_DB_USER
+            if [[ -z "$NEW_DB_USER" ]]; then
+                log_error "Database user is required"
+                exit 1
+            fi
+            DB_USER=$NEW_DB_USER
+        fi
+    fi
+    
+    # Create database if it doesn't exist
+    if ! sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
+        sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" || {
+            log_error "Failed to create database '$DB_NAME'"
+            exit 1
+        }
+        log_success "Database '$DB_NAME' created"
+    else
+        log_info "Using existing database '$DB_NAME'"
+    fi
+    
+    # Create user if it doesn't exist
+    if ! sudo -u postgres psql -t -c '\du' | cut -d \| -f 1 | grep -qw "$DB_USER"; then
+        sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';" || {
+            log_error "Failed to create user '$DB_USER'"
+            exit 1
+        }
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
+        sudo -u postgres psql -c "ALTER USER $DB_USER CREATEDB;"
+        log_success "Database user '$DB_USER' created"
+    else
+        log_info "Using existing database user '$DB_USER'"
+        # Grant privileges in case they're missing
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;" || log_warning "Could not grant privileges (user may already have them)"
+    fi
 fi
 
 # Start Redis
